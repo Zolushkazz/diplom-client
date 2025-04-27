@@ -1,0 +1,245 @@
+/* General Styles */
+.pageWrapper {
+  display: flex;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+.sidebar {
+  width: 250px; /* Fixed width for the sidebar */
+  height: 100vh;
+  background-color: #2c3e50;
+  padding: 20px;
+  position: fixed;
+  left: 0;
+  top: 0;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  z-index: 10; /* Ensure the sidebar stays above other content */
+}
+
+.contentWrapper {
+  margin-left: 270px; /* Offset for the sidebar */
+  margin-right: 20px; /* Add space on the right side */
+  padding: 20px; /* Add padding inside the content */
+  max-width: calc(100vw - 310px); /* Subtract sidebar width + margins */
+  width: 100%;
+  box-sizing: border-box; /* Ensure padding is included in width calculation */
+  background-color: #f9f9f9; /* Light background for better separation */
+  border-radius: 8px; /* Rounded corners for a clean look */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+.title {
+  text-align: center;
+  color: #333;
+  margin-bottom: 30px;
+}
+
+.searchContainer {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.searchInput {
+  width: 100%;
+  max-width: 500px;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  margin-bottom: 20px;
+}
+
+.addButtonContainer {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.addButton {
+  padding: 10px 20px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.addButton:hover {
+  background-color: #45a049;
+}
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal {
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 8px;
+  width: 400px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.inputField {
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.modalButtons {
+  display: flex;
+  justify-content: space-between;
+}
+
+.closeButton {
+  padding: 10px 20px;
+  background-color: #f44336;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.closeButton:hover {
+  background-color: #e53935;
+}
+
+/* Workers Container */
+.workersContainer {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr); /* 5 columns for current fields */
+  width: 100%;
+  border: 1px solid #eaeaea;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #fff; /* White background for contrast */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+/* Header and Rows */
+.gridHeader,
+.workerRow {
+  display: contents;
+}
+
+.gridHeader > div {
+  padding: 15px 20px;
+  background-color: #f5f5f5;
+  font-weight: bold;
+  text-align: left;
+  border-bottom: 2px solid #ddd;
+  display: flex;
+  align-items: center;
+}
+
+.workerRow > div {
+  padding: 15px 20px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  align-items: center;
+  min-height: 60px;
+}
+
+/* Hover Effect for Worker Rows */
+.workerRow:hover > div {
+  background-color: #f0f8ff; /* Light blue hover effect */
+  cursor: pointer; /* Change cursor to pointer to indicate interactivity */
+}
+
+/* Action Buttons */
+.actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.editButton {
+  padding: 8px 12px;
+  background-color: #28a745; /* Green */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.editButton:hover {
+  background-color: #218838; /* Darker green */
+}
+
+.deleteButton {
+  padding: 8px 12px;
+  background-color: #dc3545; /* Red */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.deleteButton:hover {
+  background-color: #c82333; /* Darker red */
+}
+
+.noWorkers {
+  text-align: center;
+  color: #888;
+  margin-top: 20px;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .workersContainer {
+    grid-template-columns: 1fr; /* Single column on mobile */
+    display: block;
+  }
+
+  .gridHeader {
+    display: none; /* Hide header on mobile */
+  }
+
+  .workerRow > div {
+    padding: 12px 15px;
+    border-bottom: none;
+    display: block;
+    position: relative;
+    padding-left: 40%;
+    min-height: auto;
+  }
+
+  .workerRow > div::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-weight: bold;
+    width: 35%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .workerRow > div:nth-child(5) {
+    /* Actions column */
+    padding-left: 15px;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .workerRow > div:nth-child(5)::before {
+    display: none;
+  }
+}

@@ -1,0 +1,91 @@
+/* Sidebar */
+.sidebar {
+  width: 250px;
+  height: 100vh;
+  background-color: #2c3e50;
+  padding: 20px;
+  position: fixed;
+  left: 0;
+  top: 0;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Sidebar Title */
+.sidebarTitle {
+  font-size: 24px;
+  color: #fff;
+  margin-bottom: 20px;
+  text-align: center;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+/* Sidebar Menu */
+.sidebarMenu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  overflow-y: auto;
+  /* Calculate max height dynamically, accounting for title, padding, and logout button height */
+  max-height: calc(100vh - 150px); /* Adjust 150px as needed */
+  scrollbar-width: thin;
+  scrollbar-color: #34495e transparent;
+  flex-grow: 1; /* Allow menu to take up available space */
+}
+
+.sidebarMenu::-webkit-scrollbar {
+  width: 8px;
+}
+
+.sidebarMenu::-webkit-scrollbar-thumb {
+  background-color: #34495e;
+  border-radius: 4px;
+}
+
+.sidebarMenu:hover::-webkit-scrollbar-thumb {
+  background-color: transparent;
+}
+
+.sidebarMenu li {
+  margin-bottom: 10px;
+}
+
+.sidebarLink {
+  display: block;
+  padding: 12px 15px;
+  color: #fff;
+  text-decoration: none;
+  background-color: #34495e;
+  border-radius: 5px;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  font-size: 16px;
+  text-align: center;
+}
+
+.sidebarLink:hover {
+  background-color: #1abc9c;
+  transform: scale(1.05);
+}
+
+/* Logout Button */
+.logoutButton {
+  background-color: red;
+  color: white;
+  border: none;
+  padding: 12px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  text-align: center;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  margin-top: auto; /* Push logout button to the bottom */
+  margin-bottom: 40px; /* Add some bottom margin */
+}
+
+.logoutButton:hover {
+  background-color: #c0392b;
+  transform: scale(1.05);
+}
