@@ -8,6 +8,7 @@ import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import DeleteIcon from "@mui/icons-material/Delete";
 import SearchIcon from "@mui/icons-material/Search";
 import { Add, DeleteOutline, PrintTwoTone } from "@mui/icons-material";
+import { AddActivities } from "./modal/addActivities";
 
 const data = [
   {
@@ -42,6 +43,8 @@ const data = [
 const Activities = () => {
   const [year, setYear] = useState("2024");
   const [search, setSearch] = useState("");
+  const [openAddModal, setOpenAddModal] = useState(false)
+  
 
   return (
     <div className="p-4 bg-white rounded-lg h-[93%]">     
@@ -65,7 +68,7 @@ const Activities = () => {
           />
           <SearchIcon />
         </div>
-        <Add/>
+        <Add onClick={()=>setOpenAddModal(true)} className="cursor-pointer" sx={{color:"gray"}} />
         <PrintTwoTone/>
         </div>
       </div>
@@ -111,6 +114,7 @@ const Activities = () => {
           </tbody>
         </table>
     </div>
+    <AddActivities open={openAddModal} setOpen={setOpenAddModal} />
     </div>
   );
 };
