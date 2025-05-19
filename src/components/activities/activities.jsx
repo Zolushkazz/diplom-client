@@ -1,122 +1,271 @@
-import React, { useState } from "react";
-import {
-  Select,
-  MenuItem,
-  TextField,
-} from "@mui/material";
-import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
-import DeleteIcon from "@mui/icons-material/Delete";
+import React, { useEffect, useState } from "react";
+import { Select, MenuItem, TextField } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import { Add, DeleteOutline, PrintTwoTone } from "@mui/icons-material";
+import { Add } from "@mui/icons-material";
 import { AddActivities } from "./modal/addActivities";
+import { HiOutlinePencilAlt } from "react-icons/hi";
+import { FaRegTrashCan } from "react-icons/fa6";
+import { useRouter } from "next/router";
+import { activityApi, employeeAPI } from "../api";
+import LoadingComponent from "../LoadingComp";
 
 const data = [
-  {
-    id: "2024-1",
-    name: "Сургалт 1",
-    type: "Сургалт",
-    registeredBy: "Анхаар",
-    location: "Хэлтэс 1",
-    date: "2024-11-11",
-    status: "green",
-  },
-  {
-    id: "2024-2",
-    name: "Судалгаа 2",
-    type: "Судалгаа",
-    registeredBy: "Бадрал",
-    location: "Хэлтэс 2",
-    date: "2024-11-11",
-    status: "red",
-  },
-  {
-    id: "2024-3",
-    name: "Хурал 3",
-    type: "Хурал",
-    registeredBy: "Эрдэнэ",
-    location: "Хэлтэс 3",
-    date: "2024-11-11",
-    status: "red",
-  },
+    {
+        id: "2024-1",
+        name: "Сургалт 1",
+        type: "Сургалт",
+        registeredBy: "Анхаар",
+        location: "Хэлтэс 1",
+        date: "2024-11-11",
+        status: "green",
+    },
+    {
+        id: "2024-2",
+        name: "Судалгаа 2",
+        type: "Судалгаа",
+        registeredBy: "Бадрал",
+        location: "Хэлтэс 2",
+        date: "2024-11-11",
+        status: "red",
+    },
+    {
+        id: "2024-3",
+        name: "Хурал 3",
+        type: "Хурал",
+        registeredBy: "Эрдэнэ",
+        location: "Хэлтэс 3",
+        date: "2024-11-11",
+        status: "red",
+    },
 ];
 
 const Activities = () => {
-  const [year, setYear] = useState("2024");
-  const [search, setSearch] = useState("");
-  const [openAddModal, setOpenAddModal] = useState(false)
-  
+    const [year, setYear] = useState("2024");
+    const [search, setSearch] = useState("");
+    const [openAddModal, setOpenAddModal] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
 
-  return (
-    <div className="p-4 bg-white rounded-lg h-[93%]">     
-      <div className="flex justify-between items-center mb-4">
-        <div className="flex items-center gap-4">
-            <h2 className="font-semibold text-[13px]">Үйл ажиллагаанууд</h2>
-          <Select value={year} onChange={(e) => setYear(e.target.value)} className="h-8">
-            <MenuItem value="2024">2024</MenuItem>
-            <MenuItem value="2023">2023</MenuItem>
-            <MenuItem value="2022">2022</MenuItem>
-          </Select>
-        </div>
-        <div className="flex items-center gap-3">
-        <div className="flex items-center border rounded px-2">
-          <TextField
-            placeholder="Хайлт"
-            variant="standard"
-            onChange={(e) => setSearch(e.target.value)}
-            value={search}
-            className="h-[30px]"
-          />
-          <SearchIcon />
-        </div>
-        <Add onClick={()=>setOpenAddModal(true)} className="cursor-pointer" sx={{color:"gray"}} />
-        <PrintTwoTone/>
-        </div>
-      </div>
-      <div className="overflow-x-auto">
-        <table className="w-full border-collapse border border-gray-300 text-[13px]">
-          <thead className="text-[#015197]">
-            <tr>
-              <th className="border p-2">Дугаар</th>
-              <th className="border p-2">Үйл ажиллагааны нэр</th>
-              <th className="border p-2">Үйл ажиллагааны төрөл</th>
-              <th className="border p-2">Бүртгэсэн ЗБ</th>
-              <th className="border p-2">Хийсэн газар, хэлтэс</th>
-              <th className="border p-2">Бүртгэсэн огноо</th>
-              <th className="border p-2">Үйлдэл</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data
-              .filter((item) =>
-                item.name.toLowerCase().includes(search.toLowerCase())
-              )
-              .map((row) => (
-                <tr key={row.id} className="hover:bg-gray-50">
-                  <td className="border-b p-2 flex items-center gap-2">
-                    <span
-                      className={`w-2 h-2 rounded-full ${
-                        row.status === "green" ? "bg-green-500" : "bg-red-500"
-                      }`}
-                    ></span>
-                    {row.id}
-                  </td>
-                  <td className="border p-2">{row.name}</td>
-                  <td className="border p-2">{row.type}</td>
-                  <td className="border p-2">{row.registeredBy}</td>
-                  <td className="border p-2">{row.location}</td>
-                  <td className="border p-2">{row.date}</td>
-                  <td className="border-t p-2 flex gap-2">
-                    <EditOutlinedIcon/>
-                    <DeleteOutline/>
-                  </td>
-                </tr>
-              ))}
-          </tbody>
-        </table>
-    </div>
-    <AddActivities open={openAddModal} setOpen={setOpenAddModal} />
-    </div>
-  );
+    const [activities, setActivities] = useState([]);
+
+    const router = useRouter();
+
+    const handleRowClick = (row) => {
+        router.push({
+            pathname: "/moreActivity",
+            query: {
+                id: row.id,
+            },
+        });
+        console.log("row", row);
+    };
+
+    useEffect(() => {
+        const fetchEmployees = async () => {
+            setLoading(true);
+            try {
+                const response = await activityApi.getActivities();
+                setActivities(response.data);
+                console.log("res", response.data);
+            } catch (error) {
+                setError("Error fetching employee data");
+            } finally {
+                console.log("BOlo");
+                setLoading(false);
+            }
+        };
+
+        fetchEmployees();
+    }, []);
+
+    const handleDelete = async (id) => {
+        setLoading(true);
+
+        try {
+            const response = await activityApi.deleteActivity(id);
+            setActivities((prevActivities) =>
+                prevActivities.filter((activity) => activity.id !== id)
+            );
+
+            console.log("Employee deleted successfully:", response.data);
+        } catch (error) {
+            setError("Error deleting employee");
+        }
+
+        setLoading(false);
+    };
+
+    return (
+        <>
+            {loading ? (
+                <LoadingComponent />
+            ) : (
+                <div className="p-4 px-8 bg-white rounded-lg h-[93%]">
+                    <div className="flex justify-between items-center mb-4">
+                        <div className="flex items-center gap-4">
+                            <h2 className="font-semibold text-[13px]">
+                                Үйл ажиллагаанууд
+                            </h2>
+                            <Select
+                                value={year}
+                                onChange={(e) => setYear(e.target.value)}
+                                className="h-7"
+                            >
+                                <MenuItem fontSize="13px" value="2025">
+                                    2025
+                                </MenuItem>
+                                <MenuItem fontSize="13px" value="2024">
+                                    2024
+                                </MenuItem>
+                                <MenuItem fontSize="13px" value="2023">
+                                    2023
+                                </MenuItem>
+                            </Select>
+                        </div>
+                        <div className="flex items-center gap-3">
+                            <div className="flex items-center px-2 relative">
+                                <TextField
+                                    placeholder="Хайлт"
+                                    variant="outlined"
+                                    onChange={(e) => setSearch(e.target.value)}
+                                    value={search}
+                                    size="small"
+                                    sx={{ fontSize: 13 }}
+                                />
+                                <SearchIcon
+                                    sx={{
+                                        position: "absolute",
+                                        top: 8,
+                                        right: 10,
+                                    }}
+                                />
+                            </div>
+                            <Add
+                                onClick={() => setOpenAddModal(true)}
+                                className="cursor-pointer"
+                                sx={{ color: "gray" }}
+                            />
+                        </div>
+                    </div>
+                    <div className="overflow-x-auto">
+                        <table className="w-full border-collapse border-b py-3 border-gray-300 text-[13px]">
+                            <thead className="text-[#015197]">
+                                <tr>
+                                    <th className="text-left p-2">Дугаар</th>
+                                    <th className="text-left p-2">
+                                        Үйл ажиллагааны нэр
+                                    </th>
+                                    <th className="text-left p-2">
+                                        Үйл ажиллагааны төрөл
+                                    </th>
+                                    <th className="text-left p-2">
+                                        Бүртгэсэн ЗБ
+                                    </th>
+                                    <th className="text-left p-2">
+                                        Хийсэн газар, хэлтэс
+                                    </th>
+                                    <th className="text-left p-2">
+                                        Бүртгэсэн огноо
+                                    </th>
+                                    <th className="text-left p-2">Үйлдэл</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {activities
+                                    .filter((item) =>
+                                        item.activityName
+                                            .toLowerCase()
+                                            .includes(search.toLowerCase())
+                                    )
+                                    .map((row) => (
+                                        <tr
+                                            key={row.id}
+                                            className="hover:bg-gray-50"
+                                        >
+                                            <td
+                                                onClick={() =>
+                                                    handleRowClick(row)
+                                                }
+                                                className="border-t p-2"
+                                            >
+                                                <div className="flex items-center gap-2">
+                                                    <span
+                                                        className={`w-2 h-2 rounded-full ${
+                                                            row.status ===
+                                                            "Эхлээгүй"
+                                                                ? "bg-green-500"
+                                                                : row.status ===
+                                                                  "Явагдаж байгаа"
+                                                                ? "bg-blue-500"
+                                                                : "bg-red-500"
+                                                        }`}
+                                                    ></span>
+                                                    {row.id}
+                                                </div>
+                                            </td>
+                                            <td
+                                                onClick={() =>
+                                                    handleRowClick(row)
+                                                }
+                                                className="border-t p-2"
+                                            >
+                                                {row.activityName}
+                                            </td>
+                                            <td
+                                                onClick={() =>
+                                                    handleRowClick(row)
+                                                }
+                                                className="border-t p-2"
+                                            >
+                                                {row.activityType}
+                                            </td>
+                                            <td
+                                                onClick={() =>
+                                                    handleRowClick(row)
+                                                }
+                                                className="border-t p-2"
+                                            >
+                                                {row.authorId}
+                                            </td>
+                                            <td
+                                                onClick={() =>
+                                                    handleRowClick(row)
+                                                }
+                                                className="border-t p-2"
+                                            >
+                                                {row.department}
+                                            </td>
+                                            <td
+                                                onClick={() =>
+                                                    handleRowClick(row)
+                                                }
+                                                className="border-t p-2"
+                                            >
+                                                {new Date(
+                                                    row.createdAt
+                                                ).toLocaleDateString()}
+                                            </td>
+                                            <td className="border-t p-2 gap-2 cursor-pointer">
+                                                <FaRegTrashCan
+                                                    onClick={() =>
+                                                        handleDelete(row.id)
+                                                    }
+                                                    size={20}
+                                                />
+                                            </td>
+                                        </tr>
+                                    ))}
+                            </tbody>
+                        </table>
+                    </div>
+                    <AddActivities
+                        open={openAddModal}
+                        setOpen={setOpenAddModal}
+                    />
+                </div>
+            )}
+        </>
+    );
 };
 
 export default Activities;
