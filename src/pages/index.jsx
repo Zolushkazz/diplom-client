@@ -7,25 +7,9 @@ import Activities from "../components/activities/activities";
 
 
 const MainPage = () => {
-  const [activeComponent, setActiveComponent] = useState("monitor");
+  
 
-  const renderContent = () => {
-    switch (activeComponent) {
-      case "monitor":
-        return <Monitor />;
-      case "activities":
-        return <Activities />;
-      case "hr":
-        return <HR />;
-      case "requests":
-        return <Requests />;
-
-      default:
-        return <Monitor />;
-    }
-  };
-
-  return <DashboardLayout setActiveComponent={setActiveComponent} activeComponent={activeComponent}>{renderContent()}</DashboardLayout>;
+  return <DashboardLayout/>;
 };
 
 export default MainPage;

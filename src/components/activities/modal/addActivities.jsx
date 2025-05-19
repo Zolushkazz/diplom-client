@@ -83,7 +83,6 @@ export const AddActivities = ({open, setOpen}) => {
         e.preventDefault();
         if (!validateForm()) return;
         setLoading(true);
-        console.log("sd", process.env.REACT_APP_API_URL);
         
         try {
           const response = await fetch(`http://localhost:4000/employees`, {
@@ -103,8 +102,6 @@ export const AddActivities = ({open, setOpen}) => {
                 phone: formData.phone || undefined,
               }),
           });
-      
-          console.log('Raw response:', response);
           
           if (!response.ok) {
             const errorData = await response.json();

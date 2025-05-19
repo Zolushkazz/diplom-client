@@ -17,14 +17,6 @@ import { useRouter } from "next/router";
 import Link from 'next/link';
 import LoadingComponent from "../LoadingComp";
 
-
-
-const employees = [
-    { name: "Анар", lastName: "Бат", department: "Хэлтэс 1", role: "Оролцогч", email: "a@gmail.com", phone: "99999999" },
-    { name: "Бадрал", lastName: "Болд", department: "Хэлтэс 1", role: "Зохион байгуулагч", email: "b@gmail.com", phone: "99999999" },
-    { name: "Эрдэнэ", lastName: "Хангай", department: "Хэлтэс 1", role: "Зохион байгуулагч", email: "e@gmail.com", phone: "99999999" },
-  ];
-
 const HR = () => {
   const [year, setYear] = useState("2024");
   const [search, setSearch] = useState("");
