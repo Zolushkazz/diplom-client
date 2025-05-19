@@ -29,3 +29,18 @@ export const activityApi = {
     deleteActivity: (id) => API.delete(`/activities/${id}`),
     updateActivityById: (id, data) => API.put(`/activities/${id}`, data),
 };
+
+export const activitiesAPI = {
+  getActivities: () => API.get('/')
+};
+
+export const requestAPI = {
+  createRequest: (data) => API.post('/request/create', data),
+  getRequests: () => API.get('/request'),
+  getRequestById: (id) => API.get(`/request/${id}`),
+  deleteRequest: (id) => API.delete(`/request/${id}`),
+  updateRequestById: (id, data) => API.put(`/request/${id}`, data)
+};
+
+
+
