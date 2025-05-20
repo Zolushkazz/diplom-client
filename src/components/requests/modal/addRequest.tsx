@@ -20,7 +20,6 @@ export const AddRequest = ({ open, setOpen, editData, onSuccess }) => {
 
     useEffect(() => {
         if (editData) {
-            // onSuccess();
             setFormData({
                 name: editData.name || '',
                 startDate: editData.startDate || '',
@@ -109,7 +108,7 @@ export const AddRequest = ({ open, setOpen, editData, onSuccess }) => {
             }
             
             console.log('Success:', response);
-            onSuccess();
+            onSuccess(true);
             handleClose();
         } catch (error) {
             console.error('Error:', error);

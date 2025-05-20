@@ -57,7 +57,7 @@ const Activities = () => {
 
     const handleRowClick = (row) => {
         router.push({
-            pathname: "/moreActivity",
+            pathname: "/activities/moreActivity",
             query: {
                 id: row.id,
             },
@@ -82,6 +82,11 @@ const Activities = () => {
     useEffect(() => {
         fetchEmployees();
     }, []);
+
+    useEffect(() => {
+      if (!pageRefresh) return;
+        fetchEmployees();
+    }, [pageRefresh]);
 
     const handleDelete = async (id) => {
         setLoading(true);
@@ -111,7 +116,7 @@ const Activities = () => {
             {loading ? (
                 <LoadingComponent />
             ) : (
-                <div className="p-4 px-8 bg-white rounded-lg h-[93%]">
+                <div className="p-4 px-8 w-full bg-white rounded-lg h-[93%]">
                     <div className="flex justify-between items-center mb-4">
                         <div className="flex items-center gap-4">
                             <h2 className="font-semibold text-[13px]">

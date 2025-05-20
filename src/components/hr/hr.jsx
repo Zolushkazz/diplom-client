@@ -57,7 +57,7 @@ const HR = () => {
 
     const handleRowClick = (row) => {
         router.push({
-            pathname: "/moreHr",
+            pathname: "/hr/moreHr",
             query: {
                 id: row.id,
             },
@@ -69,6 +69,7 @@ const HR = () => {
         try {
             const response = await employeeAPI.getEmployees();
             setEmployees(response.data);
+            setPageRefresh(false);
             console.log("res", response.data);
         } catch (error) {
             setError("Error fetching employee data");
@@ -81,7 +82,12 @@ const HR = () => {
 
     useEffect(() => {
         fetchEmployees();
-    }, [fetchEmployees]);
+    }, []);
+
+    useEffect(() => {
+      if (!pageRefresh) return;
+        fetchEmployees();
+    }, [pageRefresh]);
 
     const handleDelete = async (id) => {
         startLoading("doing", "Үйлдэл хийж байна...");
