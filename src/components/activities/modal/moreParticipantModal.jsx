@@ -119,16 +119,6 @@ export const MoreParticipantModal = ({ open, setOpen, data }) => {
         setIsCancel(false);
     };
 
-    const handleDelete = (index) => {
-        const updatedParticipants = activityData.participant.filter(
-            (participant) => participant.index !== index
-        );
-        setActivityData({
-            ...activityData,
-            participant: updatedParticipants,
-        });
-    };
-
     return (
         <>
             {loading && <LoadingComponent />}
@@ -156,7 +146,7 @@ export const MoreParticipantModal = ({ open, setOpen, data }) => {
                                 Үндсэн гишүүд
                             </h2>
 
-                            <div className="flex flex-col gap-3">
+                            <div className="flex flex-col gap-3 pr-10">
                                 {employees ? (
                                     employees.map((item, index) => {
                                         return (
@@ -176,11 +166,7 @@ export const MoreParticipantModal = ({ open, setOpen, data }) => {
                                                         </p>
                                                     </div>
                                                 </div>
-                                                <button
-                                                    onClick={() =>
-                                                        handleDelete(index)
-                                                    }
-                                                >
+                                                <button>
                                                     <FaRegTrashCan size={20} />
                                                 </button>
                                             </div>
@@ -194,7 +180,7 @@ export const MoreParticipantModal = ({ open, setOpen, data }) => {
                             </div>
                         </div>
 
-                        <div className="flex flex-col gap-4 w-1/2">
+                        <div className="flex flex-col pr-10 gap-4 w-1/2">
                             <h2 className="text-[15px] font-semibold">
                                 Байлцагчид
                             </h2>

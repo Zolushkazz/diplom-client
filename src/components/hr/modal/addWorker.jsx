@@ -11,7 +11,7 @@ import {
 import { useEffect, useState } from "react";
 import LoadingComponent from "../../LoadingComp";
 
-export const AddWorker = ({ open, setOpen }) => {
+export const AddWorker = ({ open, setOpen, onSuccess }) => {
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
@@ -124,6 +124,7 @@ export const AddWorker = ({ open, setOpen }) => {
 
             const result = await response.json();
             console.log("Success:", result);
+            onSuccess();
             handleClose();
         } catch (error) {
             console.error("Full error:", error);
