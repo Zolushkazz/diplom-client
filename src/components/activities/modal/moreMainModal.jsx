@@ -73,11 +73,6 @@ export const MoreMainModal = ({ open, setOpen, data }) => {
     console.log("file data", files);
     console.log("data", data);
 
-    const [location, setLocation] = useState({
-        lat: 47.918873,
-        lng: 106.917077,
-    });
-
     const handleSaveClick = async () => {
         setLoading(true);
         try {
@@ -87,7 +82,7 @@ export const MoreMainModal = ({ open, setOpen, data }) => {
             );
             if (res.status === 200) {
                 setOpen(false);
-                router.push("/");
+                router.push("/activities");
             } else {
                 console.error("Failed to save employee data", res);
             }
@@ -326,7 +321,7 @@ export const MoreMainModal = ({ open, setOpen, data }) => {
                             </FormControl>
 
                             <LocationPicker
-                                setMarkerPosition={setLocation}
+                                setMarkerPosition={setMarkerPosition}
                                 markerPosition={{
                                     lat: Number(activityData?.lat) || 0,
                                     lng: Number(activityData?.lng) || 0,
