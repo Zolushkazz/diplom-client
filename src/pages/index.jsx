@@ -8,27 +8,28 @@ import DashboardLayout from "../components/dashboard";
 const MainPage = () => {
     const [activeComponent, setActiveComponent] = useState("monitor");
 
-    const renderContent = () => {
-        switch (activeComponent) {
-            case "monitor":
-                return <Monitor />;
-            case "activities":
-                return <Activities />;
-            case "hr":
-                return <HR />;
-            case "requests":
-                return <Requests />;
+    // const renderContent = () => {
+    //     switch (activeComponent) {
+    //         case "monitor":
+    //             return <Monitor />;
+    //         case "activities":
+    //             return <Activities />;
+    //         case "hr":
+    //             return <HR />;
+    //         case "requests":
+    //             return <Requests />;
 
-            default:
-                return <Monitor />;
-        }
-    };
+    //         default:
+    //             return <Monitor />;
+    //     }
+    // };
+    
     return (
         <DashboardLayout
             setActiveComponent={setActiveComponent}
             activeComponent={activeComponent}
         >
-            {renderContent()}
+            {/* {renderContent()} */}
         </DashboardLayout>
     );
 };
