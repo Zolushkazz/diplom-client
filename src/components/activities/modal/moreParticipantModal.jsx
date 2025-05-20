@@ -70,7 +70,7 @@ export const MoreParticipantModal = ({ open, setOpen, data }) => {
             );
             if (res.status === 200) {
                 setOpen(false);
-                router.push("/");
+                router.push("/activities");
             } else {
                 console.error("Failed to save employee data", res);
             }

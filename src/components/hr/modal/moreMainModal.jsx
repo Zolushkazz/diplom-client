@@ -141,7 +141,7 @@ export const MoreMainModal = ({ open, setOpen, data }) => {
             );
             if (res.status === 200) {
                 setOpen(false);
-                router.push("/");
+                router.push("/hr");
             } else {
                 console.error("Failed to save employee data", res);
             }
