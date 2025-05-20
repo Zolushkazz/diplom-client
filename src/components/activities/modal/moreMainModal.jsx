@@ -71,25 +71,12 @@ export const MoreMainModal = ({ open, setOpen, data }) => {
     });
 
     console.log("file data", files);
+    console.log("data", data);
 
     const [location, setLocation] = useState({
-        lat: "",
-        lng: "",
+        lat: 47.918873,
+        lng: 106.917077,
     });
-
-    useEffect(() => {
-        if (activityData) {
-            console.log("pro data", data);
-
-            setActivityData(activityData);
-            setLocation({
-                lat: activityData?.lat,
-                lng: activityData?.lng,
-            });
-        }
-    }, [activityData]);
-
-    console.log("loc", location);
 
     const handleSaveClick = async () => {
         setLoading(true);
@@ -128,7 +115,7 @@ export const MoreMainModal = ({ open, setOpen, data }) => {
                     },
                 }}
             >
-                <div className="w-[900px] p-4 flex flex-col gap-3 text-[13px]">
+                <div className="w-[900px] h-[70vh] p-4 flex flex-col gap-3 text-[13px]">
                     <h2>Үйл ажиллагааны дэлгэрэнгүй мэдээлэл засах</h2>
                     <p className="border-b" />
 
@@ -230,7 +217,7 @@ export const MoreMainModal = ({ open, setOpen, data }) => {
                                     Үйл ажиллагааны төлөв
                                 </InputLabel>
                                 <Select
-                                    value={activityData.status}
+                                    value={activityData?.status}
                                     onChange={(e) =>
                                         setActivityData({
                                             ...activityData,
@@ -339,8 +326,11 @@ export const MoreMainModal = ({ open, setOpen, data }) => {
                             </FormControl>
 
                             <LocationPicker
-                                setMarkerPosition={setMarkerPosition}
-                                markerPosition={location}
+                                setMarkerPosition={setLocation}
+                                markerPosition={{
+                                    lat: Number(activityData?.lat) || 0,
+                                    lng: Number(activityData?.lng) || 0,
+                                }}
                                 onLocationSelect={(coords) => {
                                     setActivityData((prev) => ({
                                         ...prev,

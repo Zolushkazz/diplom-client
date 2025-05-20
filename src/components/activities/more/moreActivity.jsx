@@ -23,7 +23,8 @@ export const MoreActivity = () => {
         lat: 47.918873, // Улаанбаатар
         lng: 106.917701,
     });
-    const [location, setLocation] = useState(null);
+
+    const [isCancel, setIsCancel] = useState(false);
 
     const router = useRouter();
     const { id } = router.query;
@@ -36,10 +37,6 @@ export const MoreActivity = () => {
 
                 setActivity(response.data);
                 console.log("res by id", response.data);
-                setLocation({
-                    lat: activity?.lat,
-                    lng: activity?.lng,
-                });
             } catch (error) {
                 setError("Error fetching activity data");
             } finally {
@@ -68,12 +65,6 @@ export const MoreActivity = () => {
                     <div className="flex w-full justify-between py-3">
                         <h2 className="font-semibold">Үндсэн мэдээлэл:</h2>
                         <div className="flex gap-2 py-3">
-                            <button
-                                onClick={() => setOpenMoreModal(true)}
-                                className="text-[#6B6B6B] border border-[#6B6B6B] rounded-md p-1"
-                            >
-                                <IoMdPin size={15} />
-                            </button>
                             <button
                                 onClick={() => setOpenMoreModal(true)}
                                 className="text-[#6B6B6B] border border-[#6B6B6B] rounded-md p-1"
@@ -186,29 +177,31 @@ export const MoreActivity = () => {
                         </div>
                     </div>
 
-                    <LocationPicker
-                        setMarkerPosition={setMarkerPosition}
-                        markerPosition={markerPosition}
-                        onLocationSelect={(coords) => {
-                            setActivity((prev) => ({
-                                ...prev,
-                                lat: coords.lat,
-                                lng: coords.lng,
-                            }));
+                    <h2 className="font-semibold">Байршлын мэдээлэл:</h2>
+                    <button
+                        onClick={() => {
+                            setIsCancel(!isCancel);
                         }}
-                        disabled={true}
-                    />
+                        className={`w-[40%] py-2 rounded-md text-white font-medium text-[13px] transition-colors duration-300 ${
+                            isCancel ? "bg-red-500" : "bg-[#015197]"
+                        }`}
+                    >
+                        {isCancel ? "Болих" : "Харах"}
+                    </button>
+                    {isCancel && (
+                        <LocationPicker
+                            className={"h-[20%]"}
+                            setMarkerPosition={setMarkerPosition}
+                            markerPosition={{
+                                lat: Number(activity?.lat) || 0,
+                                lng: Number(activity?.lng) || 0,
+                            }}
+                            disabled={true}
+                        />
+                    )}
 
                     <div className="flex w-full justify-between py-3">
                         <h2 className="font-semibold">Тэмдэглэл:</h2>
-                        <div className="flex gap-2 py-3">
-                            <button
-                                onClick={() => setOpenMoreModal(true)}
-                                className="text-[#6B6B6B] border border-[#6B6B6B] rounded-md p-1"
-                            >
-                                <HiOutlinePencilAlt size={15} />
-                            </button>
-                        </div>
                     </div>
                     <div>
                         <TextareaAutosize
@@ -224,14 +217,6 @@ export const MoreActivity = () => {
 
                     <div className="flex w-full justify-between py-3">
                         <h2 className="font-semibold">Шийдвэр:</h2>
-                        <div className="flex gap-2 py-3">
-                            <button
-                                onClick={() => setOpenMoreModal(true)}
-                                className="text-[#6B6B6B] border border-[#6B6B6B] rounded-md p-1"
-                            >
-                                <HiOutlinePencilAlt size={15} />
-                            </button>
-                        </div>
                     </div>
                     <div>
                         <TextareaAutosize
@@ -247,14 +232,6 @@ export const MoreActivity = () => {
 
                     <div className="flex w-full justify-between py-3">
                         <h2 className="font-semibold">Хавсралт файлууд:</h2>
-                        <div className="flex gap-2 py-3">
-                            <button
-                                onClick={() => setOpenMoreModal(true)}
-                                className="text-[#6B6B6B] border border-[#6B6B6B] rounded-md p-1"
-                            >
-                                <HiOutlinePencilAlt size={15} />
-                            </button>
-                        </div>
                     </div>
                     <div className="overflow-x-auto">
                         <table className="w-full border-collapse border-b py-3 border-gray-300 text-[13px]">
@@ -286,13 +263,9 @@ export const MoreActivity = () => {
                                             </td>
                                             <td className="text-left p-2">
                                                 [--/-- --:--]
-                                            </td>{" "}
-                                            {/* Хэрвээ огноо байдаг бол харуул */}
+                                            </td>
                                             <td className="text-left p-2">
                                                 <FaRegTrashCan
-                                                    onClick={() =>
-                                                        handleDelete(index)
-                                                    }
                                                     size={20}
                                                     className="cursor-pointer text-red-500"
                                                 />
