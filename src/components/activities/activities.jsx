@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Select, MenuItem, TextField } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import { Add } from "@mui/icons-material";
+import { Add, DeleteOutline } from "@mui/icons-material";
 import { AddActivities } from "./modal/addActivities";
 import { HiOutlinePencilAlt } from "react-icons/hi";
 import { FaRegTrashCan } from "react-icons/fa6";
 import { useRouter } from "next/router";
 import { activityApi, employeeAPI } from "../api";
 import LoadingComponent from "../LoadingComp";
+import { useLoadingContext } from "../LoadingProvider";
+import ConfirmModal from "../deleteWarningModal";
 
 const data = [
     {
@@ -45,6 +47,9 @@ const Activities = () => {
     const [openAddModal, setOpenAddModal] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [deleteRow, setDeleteRow] = useState(false);
+    const [rowIdToDelete, setRowIdToDelete] = useState(null);
+    const { startLoading, stopLoading } = useLoadingContext();
 
     const [activities, setActivities] = useState([]);
 
@@ -60,36 +65,42 @@ const Activities = () => {
         console.log("row", row);
     };
 
-    useEffect(() => {
-        const fetchEmployees = async () => {
-            setLoading(true);
-            try {
-                const response = await activityApi.getActivities();
-                setActivities(response.data);
-                console.log("res", response.data);
-            } catch (error) {
-                setError("Error fetching employee data");
-            } finally {
-                console.log("BOlo");
-                setLoading(false);
-            }
-        };
+    const fetchEmployees = async () => {
+        setLoading(true);
+        try {
+            const response = await activityApi.getActivities();
+            setActivities(response.data);
+            console.log("res", response.data);
+        } catch (error) {
+            setError("Error fetching employee data");
+        } finally {
+            console.log("BOlo");
+            setLoading(false);
+        }
+    };
 
+    useEffect(() => {
         fetchEmployees();
     }, []);
 
     const handleDelete = async (id) => {
         setLoading(true);
-
+        startLoading("doing", "Үйлдэл хийж байна...");
         try {
             const response = await activityApi.deleteActivity(id);
-            setActivities((prevActivities) =>
-                prevActivities.filter((activity) => activity.id !== id)
-            );
+            if (response.status === 200) {
+                fetchEmployees();
+                setDeleteRow(false);
+                setRowIdToDelete(null);
+                startLoading("done", "Амжилттай дууслаа!");
+            }
 
             console.log("Employee deleted successfully:", response.data);
         } catch (error) {
             setError("Error deleting employee");
+            startLoading("warn", "Алдаа гарлаа!");
+        } finally {
+            stopLoading();
         }
 
         setLoading(false);
@@ -246,11 +257,17 @@ const Activities = () => {
                                                 ).toLocaleDateString()}
                                             </td>
                                             <td className="border-t p-2 gap-2 cursor-pointer">
-                                                <FaRegTrashCan
-                                                    onClick={() =>
-                                                        handleDelete(row.id)
-                                                    }
-                                                    size={20}
+                                                <DeleteOutline
+                                                    onClick={() => {
+                                                        setRowIdToDelete(
+                                                            row.id
+                                                        ),
+                                                            setDeleteRow(true);
+                                                    }}
+                                                    sx={{
+                                                        color: "gray",
+                                                        cursor: "pointer",
+                                                    }}
                                                 />
                                             </td>
                                         </tr>
@@ -261,6 +278,13 @@ const Activities = () => {
                     <AddActivities
                         open={openAddModal}
                         setOpen={setOpenAddModal}
+                        onSuccess={fetchEmployees}
+                    />
+                    <ConfirmModal
+                        open={deleteRow}
+                        onClose={() => setDeleteRow(false)}
+                        onConfirm={() => handleDelete(rowIdToDelete)}
+                        value="Та сонгогдсон мөрийг системээс устгах гэж байна. Үнэхээр устгах уу?"
                     />
                 </div>
             )}

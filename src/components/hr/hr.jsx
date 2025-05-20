@@ -12,6 +12,8 @@ import { useNavigate } from "react-router-dom";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import LoadingComponent from "../LoadingComp";
+import ConfirmModal from "../deleteWarningModal";
+import { useLoadingContext } from "../LoadingProvider";
 
 const employees = [
     {
@@ -47,6 +49,9 @@ const HR = () => {
     const [employees, setEmployees] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [deleteRow, setDeleteRow] = useState(false);
+    const [rowIdToDelete, setRowIdToDelete] = useState(null);
+    const { startLoading, stopLoading } = useLoadingContext();
 
     const router = useRouter();
 
@@ -67,8 +72,10 @@ const HR = () => {
             console.log("res", response.data);
         } catch (error) {
             setError("Error fetching employee data");
+            startLoading("warn", "Алдаа гарлаа!");
         } finally {
             setLoading(false);
+            stopLoading();
         }
     }, []);
 
@@ -77,17 +84,23 @@ const HR = () => {
     }, [fetchEmployees]);
 
     const handleDelete = async (id) => {
-        setLoading(true);
+        startLoading("doing", "Үйлдэл хийж байна...");
 
         try {
             const response = await employeeAPI.deleteEmployee(id);
-            setEmployees((prevEmployees) =>
-                prevEmployees.filter((employee) => employee.id !== id)
-            );
+
+            if (response.status === 200) {
+                fetchEmployees();
+                setDeleteRow(false);
+                setRowIdToDelete(null);
+                startLoading("done", "Амжилттай дууслаа!");
+            }
 
             console.log("Employee deleted successfully:", response.data);
+            setLoading(false);
         } catch (error) {
-            setError("Error deleting employee");
+            setError(error.message || "Алдаа гарлаа. Дахин оролдоно уу.");
+            startLoading("warn", "Алдаа гарлаа!");
         }
     };
 
@@ -242,9 +255,14 @@ const HR = () => {
                     <EditOutlinedIcon sx={{color: "gray", cursor: "pointer"}}/>
                   </Link> */}
                                                     <DeleteOutline
-                                                        onClick={() =>
-                                                            handleDelete(row.id)
-                                                        }
+                                                        onClick={() => {
+                                                            setRowIdToDelete(
+                                                                row.id
+                                                            ),
+                                                                setDeleteRow(
+                                                                    true
+                                                                );
+                                                        }}
                                                         sx={{
                                                             color: "gray",
                                                             cursor: "pointer",
@@ -257,7 +275,17 @@ const HR = () => {
                             </table>
                         </div>
                     </div>
-                    <AddWorker open={openAddModal} setOpen={setOpenAddModal} />
+                    <AddWorker
+                        open={openAddModal}
+                        setOpen={setOpenAddModal}
+                        onSuccess={fetchEmployees}
+                    />
+                    <ConfirmModal
+                        open={deleteRow}
+                        onClose={() => setDeleteRow(false)}
+                        onConfirm={() => handleDelete(rowIdToDelete)}
+                        value="Та сонгогдсон мөрийг системээс устгах гэж байна. Үнэхээр устгах уу?"
+                    />
                 </>
             )}
         </>

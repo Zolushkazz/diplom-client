@@ -17,6 +17,7 @@ export default function LocationPicker({
     markerPosition,
     setMarkerPosition,
     disabled = false,
+    className,
 }) {
     const { isLoaded, loadError } = useLoadScript({
         googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY, // .env файлд тохируулах
@@ -39,7 +40,9 @@ export default function LocationPicker({
     if (!isLoaded) return <div>Ачааллаж байна...</div>;
 
     return (
-        <div className="rounded-md overflow-hidden border border-gray-300">
+        <div
+            className={`rounded-md overflow-hidden border border-gray-300 ${className}`}
+        >
             <GoogleMap
                 mapContainerStyle={mapContainerStyle}
                 zoom={13}
