@@ -88,7 +88,6 @@ export const AddActivities = ({ open, setOpen, onSuccess }) => {
                 return startLoading("done", "Амжилттай дууслаа!");
 
             const result = await response.json();
-            refresh(true);
             console.log("Success:", result);
             onSuccess();
             handleClose();

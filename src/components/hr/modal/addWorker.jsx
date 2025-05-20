@@ -123,7 +123,6 @@ export const AddWorker = ({ open, setOpen, onSuccess }) => {
             }
 
             const result = await response.json();
-            refresh(true);
             console.log("Success:", result);
             onSuccess();
             handleClose();

@@ -84,11 +84,6 @@ const HR = () => {
         fetchEmployees();
     }, []);
 
-    useEffect(() => {
-      if (!pageRefresh) return;
-        fetchEmployees();
-    }, [pageRefresh]);
-
     const handleDelete = async (id) => {
         startLoading("doing", "Үйлдэл хийж байна...");
 
