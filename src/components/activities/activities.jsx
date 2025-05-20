@@ -8,6 +8,7 @@ import { FaRegTrashCan } from "react-icons/fa6";
 import { useRouter } from "next/router";
 import { activityApi, employeeAPI } from "../api";
 import LoadingComponent from "../LoadingComp";
+import ConfirmModal from "../deleteWarningModal";
 
 const data = [
     {
@@ -45,14 +46,16 @@ const Activities = () => {
     const [openAddModal, setOpenAddModal] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-
+    const [deleteRow, setDeleteRow] = useState(false);
+    const [rowIdToDelete, setRowIdToDelete] = useState(null);
+    const [pageRefresh, setPageRefresh] = useState(false);
     const [activities, setActivities] = useState([]);
 
     const router = useRouter();
 
     const handleRowClick = (row) => {
         router.push({
-            pathname: "/moreActivity",
+            pathname: "/activities/moreActivity",
             query: {
                 id: row.id,
             },
@@ -60,23 +63,29 @@ const Activities = () => {
         console.log("row", row);
     };
 
-    useEffect(() => {
-        const fetchEmployees = async () => {
-            setLoading(true);
-            try {
-                const response = await activityApi.getActivities();
-                setActivities(response.data);
-                console.log("res", response.data);
-            } catch (error) {
-                setError("Error fetching employee data");
-            } finally {
-                console.log("BOlo");
-                setLoading(false);
-            }
-        };
+    const fetchEmployees = async () => {
+        setLoading(true);
+        try {
+            const response = await activityApi.getActivities();
+            setActivities(response.data);
+            setPageRefresh(false);
+            console.log("res", response.data);
+        } catch (error) {
+            setError("Error fetching employee data");
+        } finally {
+            console.log("BOlo");
+            setLoading(false);
+        }
+    };
 
+    useEffect(() => {
         fetchEmployees();
     }, []);
+
+    useEffect(() => {
+      if (!pageRefresh) return;
+        fetchEmployees();
+    }, [pageRefresh]);
 
     const handleDelete = async (id) => {
         setLoading(true);
@@ -86,6 +95,9 @@ const Activities = () => {
             setActivities((prevActivities) =>
                 prevActivities.filter((activity) => activity.id !== id)
             );
+            setRowIdToDelete(null);
+            setDeleteRow(false);
+            setPageRefresh(true);
 
             console.log("Employee deleted successfully:", response.data);
         } catch (error) {
@@ -100,7 +112,7 @@ const Activities = () => {
             {loading ? (
                 <LoadingComponent />
             ) : (
-                <div className="p-4 px-8 bg-white rounded-lg h-[93%]">
+                <div className="p-4 px-8 w-full bg-white rounded-lg h-[93%]">
                     <div className="flex justify-between items-center mb-4">
                         <div className="flex items-center gap-4">
                             <h2 className="font-semibold text-[13px]">
@@ -247,8 +259,11 @@ const Activities = () => {
                                             </td>
                                             <td className="border-t p-2 gap-2 cursor-pointer">
                                                 <FaRegTrashCan
-                                                    onClick={() =>
-                                                        handleDelete(row.id)
+                                                    onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            setRowIdToDelete(row.id);
+                                                            setDeleteRow(true)
+                                                        }
                                                     }
                                                     size={20}
                                                 />
@@ -261,7 +276,14 @@ const Activities = () => {
                     <AddActivities
                         open={openAddModal}
                         setOpen={setOpenAddModal}
+                        refresh={setPageRefresh}
                     />
+                    <ConfirmModal 
+                        open={deleteRow} 
+                        onClose={() => setDeleteRow(false)} 
+                        onConfirm={() => handleDelete(rowIdToDelete)} 
+                        value='Та сонгогдсон мөрийг системээс устгах гэж байна. Үнэхээр устгах уу?' 
+                    /> 
                 </div>
             )}
         </>

@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import LoadingComponent from "../LoadingComp";
+import ConfirmModal from "../deleteWarningModal";
 
 const employees = [
     {
@@ -47,12 +48,15 @@ const HR = () => {
     const [employees, setEmployees] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [deleteRow, setDeleteRow] = useState(false);
+    const [rowIdToDelete, setRowIdToDelete] = useState(null);
+    const [pageRefresh, setPageRefresh] = useState(false);
 
     const router = useRouter();
 
     const handleRowClick = (row) => {
         router.push({
-            pathname: "/moreHr",
+            pathname: "/hr/moreHr",
             query: {
                 id: row.id,
             },
@@ -64,6 +68,7 @@ const HR = () => {
         try {
             const response = await employeeAPI.getEmployees();
             setEmployees(response.data);
+            setPageRefresh(false);
             console.log("res", response.data);
         } catch (error) {
             setError("Error fetching employee data");
@@ -74,7 +79,12 @@ const HR = () => {
 
     useEffect(() => {
         fetchEmployees();
-    }, [fetchEmployees]);
+    }, []);
+
+    useEffect(() => {
+      if (!pageRefresh) return;
+        fetchEmployees();
+    }, [pageRefresh]);
 
     const handleDelete = async (id) => {
         setLoading(true);
@@ -84,6 +94,9 @@ const HR = () => {
             setEmployees((prevEmployees) =>
                 prevEmployees.filter((employee) => employee.id !== id)
             );
+            setRowIdToDelete(null);
+            setDeleteRow(false);
+            setPageRefresh(true);
 
             console.log("Employee deleted successfully:", response.data);
         } catch (error) {
@@ -242,8 +255,11 @@ const HR = () => {
                     <EditOutlinedIcon sx={{color: "gray", cursor: "pointer"}}/>
                   </Link> */}
                                                     <DeleteOutline
-                                                        onClick={() =>
-                                                            handleDelete(row.id)
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            setRowIdToDelete(row.id);
+                                                            setDeleteRow(true)
+                                                          }
                                                         }
                                                         sx={{
                                                             color: "gray",
@@ -257,7 +273,13 @@ const HR = () => {
                             </table>
                         </div>
                     </div>
-                    <AddWorker open={openAddModal} setOpen={setOpenAddModal} />
+                    <AddWorker open={openAddModal} setOpen={setOpenAddModal} refresh={setPageRefresh} />
+                    <ConfirmModal 
+                      open={deleteRow} 
+                      onClose={() => setDeleteRow(false)} 
+                      onConfirm={() => handleDelete(rowIdToDelete)} 
+                      value='Та сонгогдсон мөрийг системээс устгах гэж байна. Үнэхээр устгах уу?' 
+                    /> 
                 </>
             )}
         </>

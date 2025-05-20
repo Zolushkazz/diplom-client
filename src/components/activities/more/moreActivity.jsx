@@ -51,10 +51,11 @@ export const MoreActivity = () => {
     }, []);
 
     const handleBackClick = () => {
-        router.push("/"); // Буцах үйлдлийг гүйцэтгэнэ
+        router.push("/activities"); // Буцах үйлдлийг гүйцэтгэнэ
     };
 
     return (
+        <div className="bg-white">
         <div className="p-4 px-8 bg-white rounded-lg text[13px] h-screen overflow-y-scroll">
             {/* BACK */}
             <KeyboardBackspaceOutlinedIcon
@@ -402,6 +403,6 @@ export const MoreActivity = () => {
                 open={openMoreParticipantModal}
                 setOpen={setOpenMoreParticipantModal}
             />
-        </div>
+        </div></div>
     );
 };

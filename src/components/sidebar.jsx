@@ -1,64 +1,75 @@
-'use client'
+'use client';
 
+import { useState, useEffect } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
 
-import { useState } from "react";
-import Activities from "./activities/activities";
-import Requests from "./requests/requests";
-import Monitor from "./monitor/monitor";
-import HR from "./hr/hr";
+import Requests from './requests/requests';
+import Monitor from './monitor/monitor';
+import HR from './hr/hr';
 
-export const Sidebar = () => {
-    const [activeComponent, setActiveComponent] = useState("monitor");
+export const Sidebar = ({ children }) => {
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const [activeComponent, setActiveComponent] = useState('monitor');
+
+  useEffect(() => {
+    if (pathname === '/') setActiveComponent('monitor');
+    else if (pathname.includes('/activities')) setActiveComponent('activities');
+    else if (pathname.includes('/hr')) setActiveComponent('hr');
+    else if (pathname.includes('/requests')) setActiveComponent('requests');
+  }, [pathname]);
+
+  const handleSidebarClick = (component) => {
+    setActiveComponent(component);
+    router.push(component === 'monitor' ? '/' : `/${component}`);
+  };
 
   const renderContent = () => {
     switch (activeComponent) {
-      case "monitor":
+      case 'monitor':
         return <Monitor />;
-      case "activities":
-        return <Activities />;
-      case "hr":
-        return <HR />;
-      case "requests":
-        return <Requests />;
-
+      case 'activities':
+      case 'hr':
+      case 'requests':
+        router.push(`/${activeComponent}`);
+        return null;
       default:
-        return <Monitor />;
+        router.push('/');
+        return null;
     }
   };
-    return(
-        <div className="flex">
-        <div className="flex flex-col h-[90vh] w-[270px] p-3 m-3 text-[13px] rounded-lg bg-white overflow-auto">
-            <div className="flex flex-col w-full p-6 gap-2">
+
+  return (
+    <div className="flex w-full">
+      {/* Sidebar */}
+      <aside className="flex flex-col justify-between h-[90vh] w-[270px] p-3 m-3 text-[13px] rounded-lg bg-white overflow-auto">
+        <div className="flex flex-col w-full p-3 gap-3">
+          {[
+            { label: 'Хянах самбар', value: 'monitor' },
+            { label: 'Үйл ажиллагаа', value: 'activities' },
+            { label: 'Хүний нөөц', value: 'hr' },
+            { label: 'Хүсэлтүүд', value: 'requests' },
+          ].map(({ label, value }) => (
             <button
-              onClick={() => setActiveComponent("monitor")}
-              className={`sidebar-btn ${activeComponent === "monitor" ? "active-btn" : ""}`}
+              key={value}
+              onClick={() => handleSidebarClick(value)}
+              className={`sidebar-btn ${activeComponent === value ? 'active-btn' : ''}`}
             >
-              Хянах самбар
+              {label}
             </button>
-            <button
-              onClick={() => setActiveComponent("activities")}
-              className={`sidebar-btn ${activeComponent === "activities" ? "active-btn" : ""}`}
-            >
-              Үйл ажиллагаа
-            </button>
-            <button
-              onClick={() => setActiveComponent("hr")}
-              className={`sidebar-btn ${activeComponent === "hr" ? "active-btn" : ""}`}
-            >
-              Хүний нөөц
-            </button>
-            <button
-              onClick={() => setActiveComponent("requests")}
-              className={`sidebar-btn ${activeComponent === "requests" ? "active-btn" : ""}`}
-            >
-              Хүсэлтүүд
-            </button>
-          </div>
-          <button onClick={()=>setOpen(true)} className="p-2 mx-6 bg-red-300 hover:bg-red-500 text-white rounded">Гарах</button>
+          ))}
         </div>
-        <div className="py-6 pl-3 w-full">
-        {renderContent()}
-        </div>
-        </div>
-    )
-}
+
+        <button className="p-2 mx-6 bg-red-300 hover:bg-red-500 text-white rounded">
+          Гарах
+        </button>
+      </aside>
+
+      {/* Main Content */}
+      <main className="py-6 pl-3 pr-5 w-full">
+        {children || renderContent()}
+      </main>
+    </div>
+  );
+};

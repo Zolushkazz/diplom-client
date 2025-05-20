@@ -23,11 +23,13 @@ const Requests = () => {
   const [error, setError] = useState(null); 
   const [editData, setEditData] = useState(null);
   const router = useRouter(); // Fixed destructuring
+  const [pageRefresh, setPageRefresh] = useState(false);
 
   const fetchRequests = async () => {
     try {
       const response = await requestAPI.getRequests(); 
       setGetRequests(response.data);
+      setPageRefresh(false);
     } catch (error) {
       setError("Error fetching request data"); 
     } 
@@ -36,6 +38,11 @@ const Requests = () => {
   useEffect(() => {
     fetchRequests();
   }, []);
+
+  useEffect(() => {
+    if(!pageRefresh) return;
+    fetchRequests();
+  }, [pageRefresh]);
 
   const handleEdit = (request) => {
     setEditData(request);
@@ -51,7 +58,7 @@ const Requests = () => {
     try {
       const response = await requestAPI.deleteRequest(id);
       if(response.status === 200){
-        fetchRequests();
+        setPageRefresh(true);
         setDeleteRow(false);
         setRowIdToDelete(null);
       }
@@ -62,7 +69,7 @@ const Requests = () => {
   };
 
   const handleRowClick = () => {
-    router.push(`/requestsMore`);
+    router.push(`/requests/requestsMore`);
   };
 
   return (
@@ -113,10 +120,13 @@ const Requests = () => {
                   <td className="border-b p-2 flex items-center">
                     <EditOutlinedIcon 
                       sx={{color: "gray", cursor: "pointer"}} 
-                      onClick={() => handleEdit(request.id)} 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleEdit(request.id)
+                      }} 
                     />
                     <DeleteOutline 
-                      onClick={() => {setRowIdToDelete(request.id), setDeleteRow(true)}} 
+                      onClick={(e) => {e.stopPropagation(); setRowIdToDelete(request.id); setDeleteRow(true)}} 
                       sx={{color: "gray", cursor: "pointer"}}
                     />
                   </td>
@@ -130,7 +140,7 @@ const Requests = () => {
         open={openAddModal} 
         setOpen={setOpenAddModal} 
         editData={editData} 
-        onSuccess={fetchRequests}
+        onSuccess={setPageRefresh}
       />
       <ConfirmModal 
         open={deleteRow} 

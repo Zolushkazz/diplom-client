@@ -245,7 +245,7 @@ import {
 import { useEffect, useState } from "react";
 import LoadingComponent from "../../LoadingComp";
 
-export const AddActivities = ({ open, setOpen }) => {
+export const AddActivities = ({ open, setOpen, refresh }) => {
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
@@ -318,6 +318,7 @@ export const AddActivities = ({ open, setOpen }) => {
             }
 
             const result = await response.json();
+            refresh(true);
             console.log("Success:", result);
             handleClose();
         } catch (error) {

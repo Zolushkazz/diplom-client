@@ -35,7 +35,7 @@ export const MoreHr = () => {
     }, []);
 
     const handleBackClick = () => {
-        router.push("/");
+        router.push("/hr");
     };
 
     return (
