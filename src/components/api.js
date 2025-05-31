@@ -17,6 +17,7 @@ export const userAPI = {
 };
 
 export const employeeAPI = {
+    createEmployee: (data) => API.post("/", data),
     getEmployees: () => API.get("/employees"),
     getEmployeeById: (id) => API.get(`/employees/${id}`),
     deleteEmployee: (id) => API.delete(`/employees/${id}`),

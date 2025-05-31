@@ -10,8 +10,9 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import LoadingComponent from "../../LoadingComp";
+import { employeeAPI } from "../../api";
 
-export const AddWorker = ({ open, setOpen, onSuccess }) => {
+export const AddWorker = ({ open, setOpen, onSuccess, editData }) => {
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
@@ -39,6 +40,19 @@ export const AddWorker = ({ open, setOpen, onSuccess }) => {
         setErrors({});
         setOpen(false);
     };
+
+    useEffect(() => {
+        if (editData) {
+            setFormData({
+                name: editData.name || "",
+                lastName: editData.lastName || "",
+                department: editData.department || "",
+                role: editData.role || "",
+            });
+        }
+    }, [editData]);
+
+    console.log("edit", editData);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -95,36 +109,26 @@ export const AddWorker = ({ open, setOpen, onSuccess }) => {
         console.log("sd", process.env.REACT_APP_API_URL);
 
         try {
-            const response = await fetch(`http://localhost:4000/employees`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-                body: JSON.stringify({
-                    username: formData.username || undefined,
-                    password: formData.password || undefined,
+            let response;
+
+            if (editData && editData.id) {
+                response = await employeeAPI.updateEmployeeById(editData.id, {
                     name: formData.name,
                     lastName: formData.lastName,
                     department: formData.department,
                     role: formData.role,
-                    email: formData.email || undefined,
-                    phone: formData.phone || undefined,
-                }),
-            });
-
-            console.log("Raw response:", response);
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                console.log("res", response);
-
-                throw new Error("Алдаа гарлаа" || errorData.message);
+                });
+            } else {
+                response = await employeeAPI.createEmployee({
+                    name: formData.name,
+                    lastName: formData.lastName,
+                    department: formData.department,
+                    role: formData.role,
+                });
             }
 
-            const result = await response.json();
-            console.log("Success:", result);
-            onSuccess();
+            console.log("Success:", response);
+            onSuccess(true);
             handleClose();
         } catch (error) {
             console.error("Full error:", error);
