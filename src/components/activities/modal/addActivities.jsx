@@ -12,7 +12,7 @@ import { useEffect, useState } from "react";
 import LoadingComponent from "../../LoadingComp";
 import { useLoadingContext } from "../../LoadingProvider";
 
-export const AddActivities = ({ open, setOpen, onSuccess }) => {
+export const AddActivities = ({ open, setOpen, onSuccess, editData }) => {
     const { startLoading, stopLoading } = useLoadingContext();
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
@@ -33,6 +33,17 @@ export const AddActivities = ({ open, setOpen, onSuccess }) => {
         setErrors({});
         setOpen(false);
     };
+
+    useEffect(() => {
+        if (editData) {
+            setFormData({
+                authorId: editData.authorId || "",
+                activityName: editData.activityName || "",
+                activityType: editData.activityType || "",
+                department: editData.department || "",
+            });
+        }
+    }, [editData]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;

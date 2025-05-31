@@ -52,6 +52,7 @@ const HR = () => {
     const [deleteRow, setDeleteRow] = useState(false);
     const [rowIdToDelete, setRowIdToDelete] = useState(null);
     const { startLoading, stopLoading } = useLoadingContext();
+    const [editData, setEditData] = useState(null);
 
     const router = useRouter();
 
@@ -62,6 +63,13 @@ const HR = () => {
                 id: row.id,
             },
         });
+    };
+
+    console.log("edit", editData);
+
+    const handleEdit = (employee) => {
+        setEditData(employee);
+        setOpenAddModal(true);
     };
 
     const fetchEmployees = useCallback(async () => {
@@ -252,9 +260,16 @@ const HR = () => {
                                                     )}
                                                 </td>
                                                 <td className="border-t p-2 flex gap-2">
-                                                    {/* <Link key={row.id} href={`/more`}>
-                    <EditOutlinedIcon sx={{color: "gray", cursor: "pointer"}}/>
-                  </Link> */}
+                                                    <EditOutlinedIcon
+                                                        sx={{
+                                                            color: "gray",
+                                                            cursor: "pointer",
+                                                        }}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleEdit(row);
+                                                        }}
+                                                    />
                                                     <DeleteOutline
                                                         onClick={() => {
                                                             setRowIdToDelete(
@@ -280,6 +295,7 @@ const HR = () => {
                         open={openAddModal}
                         setOpen={setOpenAddModal}
                         onSuccess={fetchEmployees}
+                        editData={editData}
                     />
                     <ConfirmModal
                         open={deleteRow}
