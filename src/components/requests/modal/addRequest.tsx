@@ -19,7 +19,6 @@ export const AddRequest = ({
     open,
     setOpen,
     editData,
-    setEditData,
     onSuccess,
 }) => {
     const [getWorkers, setGetWorkers] = useState<Employee[]>([]);

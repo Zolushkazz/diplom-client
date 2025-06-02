@@ -71,7 +71,7 @@ const Requests = () => {
         router.push({
             pathname: "/requests/requestsMore",
             query: {
-                id: row.id,
+                id: rowId,
             },
         });
     };
