@@ -40,15 +40,21 @@ const Requests = () => {
         fetchRequests();
     }, [pageRefresh]);
 
-    const handleEdit = (request) => {
-        setEditData(request);
-        setOpenAddModal(true);
+    const handleEdit = (id) => {
+      fetchReqMore(id);
+      setOpenAddModal(true);
     };
 
-    const handleAddNew = () => {
-        setEditData(null);
-        setOpenAddModal(true);
-    };
+    const fetchReqMore = async (reqId) => {     
+      try {
+        const response = await requestAPI.getRequestById(reqId);
+        if (response.status == 200) {
+          setEditData(response.data);
+        }
+      } catch (error) { 
+        setError("Error fetching request data");
+      }
+    }
 
     const handleDelete = async (id) => {
         try {
@@ -64,8 +70,13 @@ const Requests = () => {
         }
     };
 
-    const handleRowClick = () => {
-        router.push(`/requests/requestsMore`);
+    const handleRowClick = (rowId) => {
+        router.push({
+            pathname: "/requests/requestsMore",
+            query: {
+                id: row.id,
+            },
+        });
     };
 
     return (
@@ -111,12 +122,12 @@ const Requests = () => {
                                 <th className="text-left p-2">
                                     Бүртгэсэн ажилтан
                                 </th>
-                                <th className="text-left p-2">
+                                {/* <th className="text-left p-2">
                                     Хүсэлт бүртгэсэн хэлтэс
-                                </th>
-                                <th className="text-left p-2">
+                                </th> */}
+                                {/* <th className="text-left p-2">
                                     Хүсэлтийн төрөл
-                                </th>
+                                </th> */}
                                 <th className="text-left p-2">Товч тайлбар</th>
                                 <th className="text-left p-2">
                                     Бүртгэсэн огноо
@@ -138,7 +149,7 @@ const Requests = () => {
                                     <tr
                                         key={index}
                                         className="hover:bg-gray-50 cursor-pointer"
-                                        onClick={handleRowClick}
+                                        onClick={() => handleRowClick(request.id)}
                                     >
                                         <td className="border-t p-2">
                                             {request.name}
@@ -146,12 +157,12 @@ const Requests = () => {
                                         <td className="border-t p-2">
                                             {request.registeredEmployee}
                                         </td>
-                                        <td className="border-t p-2">
+                                        {/* <td className="border-t p-2">
                                             {request.department}
-                                        </td>
-                                        <td className="border-t p-2">
+                                        </td> */}
+                                        {/* <td className="border-t p-2">
                                             {request.description}
-                                        </td>
+                                        </td> */}
                                         <td className="border-t p-2 break-words">
                                             {request.notes}
                                         </td>
@@ -196,6 +207,7 @@ const Requests = () => {
                 open={openAddModal}
                 setOpen={setOpenAddModal}
                 editData={editData}
+                setEditData={setEditData}
                 onSuccess={setPageRefresh}
             />
             <ConfirmModal

@@ -15,7 +15,7 @@ interface Employee {
     id: number;
     name: string;
 }
-export const AddRequest = ({ open, setOpen, editData, onSuccess }) => {
+export const AddRequest = ({ open, setOpen, editData, setEditData, onSuccess }) => {
     const [getWorkers, setGetWorkers] = useState<Employee[]>([]);
     const [errors, setErrors] = useState({});
     const [formData, setFormData] = useState({
@@ -42,6 +42,7 @@ export const AddRequest = ({ open, setOpen, editData, onSuccess }) => {
             startDate: "",
             notes: "",
         });
+        setEditData(null);
         setErrors({});
     };
 

@@ -42,8 +42,7 @@ export const Sidebar = ({ children }) => {
     };
 
     return (
-        <div className="flex w-full">
-            {/* Sidebar */}
+        <div className="flex w-full bg-gray-100">
             <aside className="flex flex-col justify-between h-[90vh] w-[270px] p-3 m-3 text-[13px] rounded-lg bg-white overflow-auto">
                 <div className="flex flex-col w-full p-3 gap-3">
                     {[
@@ -69,8 +68,7 @@ export const Sidebar = ({ children }) => {
                 </button>
             </aside>
 
-            {/* Main Content */}
-            <main className="py-6 pl-3 pr-5 w-full">
+            <main className="py-3 pl-3 pr-5 w-full">
                 {children || renderContent()}
             </main>
         </div>
