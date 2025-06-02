@@ -20,6 +20,7 @@ export const AddRequest = ({
     setOpen,
     editData,
     onSuccess,
+    setEditData,
 }) => {
     const [getWorkers, setGetWorkers] = useState<Employee[]>([]);
     const [errors, setErrors] = useState({});
@@ -49,7 +50,6 @@ export const AddRequest = ({
         });
         setEditData(null);
         setErrors({});
-        setEditData(null);
     };
 
     useEffect(() => {
