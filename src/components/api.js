@@ -40,4 +40,5 @@ export const requestAPI = {
     getRequestById: (id) => API.get(`/request/${id}`),
     deleteRequest: (id) => API.delete(`/request/${id}`),
     updateRequestById: (id, data) => API.put(`/request/${id}`, data),
+    shiftRequest: (data) => API.put(`/request/shift`, data),
 };

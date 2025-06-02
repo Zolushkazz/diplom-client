@@ -1,177 +1,151 @@
 'use client'
 
 import KeyboardBackspaceOutlinedIcon from "@mui/icons-material/KeyboardBackspaceOutlined";
-import { Avatar, Divider } from "@mui/material";
+import { Avatar, Divider, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import { DeleteOutline } from "@mui/icons-material";
+import { TransitionModal } from "../modal/transitionModal";
+
 
 export const MoreRequests = () => {
     const [openMoreModal, setOpenMoreModal] = useState(false);
     const router = useRouter();
     const { id } = router.query;
 
+    console.log(id);
+    
+    const [openTransition, setOpenTransition] = useState(false)
+
     const handleBackClick = () => {
         router.push("/requests");
     };
 
     return(
-         <div className="p-4 px-8 bg-white rounded-lg text-[13px] h-[93%]">
+         <div className="p-4 px-8 bg-white rounded-lg text-[13px] h-[93%] overflow-y-auto">
             <KeyboardBackspaceOutlinedIcon
                 onClick={handleBackClick} // Буцах товчийг дархад энэ функц ажиллана
                 style={{ cursor: "pointer", fontSize: "30px" }}
             />
             <p className="border-b py-1"></p>
+         <div className="flex flex-col justify-between h-full">
+         <div className="">
             <div className="flex w-full items-center justify-between">
                 <h2 className="text-[15px] p-4 font-semibold ">
                     Дэлгэрэнгүй мэдээлэл
                 </h2>
-                <button
-                    onClick={() => setOpenMoreModal(true)}
-                    className="text-[#015197]"
-                >
-                    Засах
-                </button>
-            </div>
-            <div className="flex px-8 gap-4">
-                <div className="flex flex-col gap-5 items-center">
-                    <Avatar sx={{ width: 100, height: 100, boxShadow: 2 }} />
-                    <button className="w-fit border px-3 py-1 rounded-md border-[#b2b2b2]">
-                        Зураг солих
-                    </button>
-                </div>
-                <Divider
-                    orientation="vertical"
-                    flexItem
-                    sx={{ height: "fit", bgcolor: "grey.100", marginX: 5 }}
-                />
-                <div className="flex flex-col gap-3">
-                    <h2 className="font-semibold">Үндсэн мэдээлэл</h2>
-                    <div>
-                        <p className="text-[#B5B5B5]">Ургийн овог</p>
-                        <p className="text-[#015197]">
-                            {/* {employee?.familyName ? employee.familyName : "Ургийн овог"} */}
-                        </p>
-                    </div>
-                    <div>
-                        <p className="text-[#B5B5B5]">Эцэг эхийн нэр</p>
-                        <p className="text-[#015197]">
-                            {/* {employee?.lastName ? employee.lastName : "Эцэг эхийн нэр"} */}
-                        </p>
-                    </div>
-                    <div>
-                        <p className="text-[#B5B5B5]">Өөрийн нэр</p>
-                        <p className="text-[#015197]">
-                            {/* {employee?.name ? employee.name : "Өөрийн нэр"} */}
-                        </p>
-                    </div>
-                    <div>
-                        <p className="text-[#B5B5B5]">Төрсөн өдөр</p>
-                        <p className="text-[#015197]">
-                            {/* {employee?.birthDate ? employee.birthDate : "Төрсөн өдөр"} */}
-                        </p>
-                    </div>
-                    <div>
-                        <p className="text-[#B5B5B5]">Төрсөн аймаг/хот</p>
-                        <p className="text-[#015197]">
-                            {/* {employee?.province ? employee?.province : "Төрсөн аймаг/хот"} */}
-                        </p>
-                    </div>
-                    <div>
-                        <p className="text-[#B5B5B5]">Төрсөн сум/дүүрэг</p>
-                        <p className="text-[#015197]">
-                            {/* {employee?.district ? employee?.district : "Төрсөн сум/дүүрэг"} */}
-                        </p>
-                    </div>
-                    <div>
-                        <p className="text-[#B5B5B5]">Хүйс</p>
-                        <p className="text-[#015197]">
-                            {/* {employee?.gender 
-                                ? employee?.gender === "male"
-                                    ? "Эр"
-                                    : "Эм"
-                                : "Хүйс"}{" "} */}
-                        </p>
-                    </div>
-                </div>
-                <Divider
-                    orientation="vertical"
-                    flexItem
-                    sx={{ height: "fit", bgcolor: "grey.100", marginX: 5 }}
-                />
-                <div className="flex flex-col gap-3">
-                    <h2 className="font-semibold">Системийн мэдээлэл</h2>
-                    <div>
-                        <p className="text-[#B5B5B5]">Код</p>
-                        <p className="text-[#015197]">
-                            {/* {employee?.id ? employee.id : "Код"} */}
-                        </p>
-                    </div>
-                    <div>
-                        <p className="text-[#B5B5B5]">Нэвтрэх нэр</p>
-                        <p className="text-[#015197]">
-                            {/* {employee?.username
-                                ? employee.username
-                                : "Нэвтрэх нэр"} */}
-                        </p>
-                    </div>
-                    <div>
-                        <p className="text-[#B5B5B5]">Мэргэжил</p>
-                        <p className="text-[#015197]">
-                            {/* {employee?.major ? employee.major : "Мэргэжил"} */}
-                        </p>
-                    </div>
-                    <div>
-                        <p className="text-[#B5B5B5]">Хэлтсийн нэр</p>
-                        <p className="text-[#015197]">
-                            {/* {employee?.department
-                                ? employee.department
-                                : "Хэлтсийн нэр"} */}
-                        </p>
-                    </div>
-                    <div>
-                        <p className="text-[#B5B5B5]">Хэрэглэгчийн төрөл</p>
-                        <p className="text-[#015197]">
-                            {/* {employee?.role
-                                ? employee.role
-                                : "Хэрэглэгчийн төрөл"} */}
-                        </p>
-                    </div>
-                </div>
-                <Divider
-                    orientation="vertical"
-                    flexItem
-                    sx={{ height: "fit", bgcolor: "grey.100", marginX: 5 }}
-                />
-                <div className="flex flex-col gap-3">
-                    <h2 className="font-semibold">Холбоо барих мэдээлэл</h2>
-                    <div>
-                        <p className="text-[#B5B5B5]">Гар утас</p>
-                        <p className="text-[#015197]">
-                            {/* {employee?.phone ? employee.phone : "Утас"} */}
-                        </p>
-                    </div>
-                    <div>
-                        <p className="text-[#B5B5B5]">Ажлын утас</p>
-                        <p className="text-[#015197]">
-                            {/* {employee?.workPhone
-                                ? employee.workPhone
-                                : "Ажлын Утас"} */}
-                        </p>
-                    </div>
-                    <div>
-                        <p className="text-[#B5B5B5]">И-мэйл</p>
-                        <p className="text-[#015197]">
-                            {/* {employee?.email ? employee.email : "Имэйл"} */}
-                        </p>
-                    </div>
-                    <div>
-                        <p className="text-[#B5B5B5]">Хаяг</p>
-                        <p className="text-[#015197]">
-                            {/* {employee?.address ? employee.address : "Хаяг"} */}
-                        </p>
-                    </div>
+                <div className="border rounded-md border-gray-300">
+                 <EditOutlinedIcon
+                    sx={{
+                        color: "gray",
+                        cursor: "pointer",
+                    }}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        handleEdit(request.id);
+                    }}
+                    />
                 </div>
             </div>
-        </div>
+            <TextField
+              placeholder="Тайлбар"
+              variant="outlined"
+            //   onChange={(e) => setSearch(e.target.value)}
+            //   value={search}
+              className="h-[30px] text-[13px]"
+              rows={3}
+              fullWidth
+              disabled
+            />
+            </div>
+           <div className="">
+            {/* <div className="flex w-full items-center justify-between">
+              <h2 className="text-[15px] p-4 font-semibold ">
+                  Хавсралт файлууд
+                </h2>
+               <div className="border rounded-md border-gray-300">
+                 <EditOutlinedIcon
+                    sx={{
+                        color: "gray",
+                        cursor: "pointer",
+                    }}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        handleEdit(request.id);
+                    }}
+                    />
+                </div>
+            </div>
+            <div className="">
+                <div className="flex items-center text-[#6a6c71] text-[13px] font-medium py-2 pl-[10%]">
+                    <p className="w-[15%] px-2">№</p>
+                    <p className="w-[15%] px-2">Файлын нэр</p>
+                    <p className="w-[15%] px-2 flex justify-end">Нэмэгдсэн огноо</p>
+                 </div>
+            </div> */}
+           {/* <div className="flex">
+            <p></p>
+            <p></p>
+            <p></p>
+            <DeleteOutline
+                onClick={(e) => {
+                    e.stopPropagation();
+                    setRowIdToDelete(
+                        request.id
+                    );
+                    setDeleteRow(true);
+                }}
+                sx={{
+                    color: "gray",
+                    cursor: "pointer",
+                }}
+            />
+           </div>*/}
+           </div> 
+           <div className="">
+              <div className="flex w-full items-center justify-between">
+                <h2 className="text-[15px] p-4 font-semibold ">
+                  Шилжүүлгүүд
+                </h2>
+                 <div className="text-[#015197] flex gap-3 justify-end w-full">
+                 <button onClick={()=>setOpenTransition(true)}>Шилжүүлэх</button>
+                 <span>|</span>
+                 <p>Хүсэлт хаах</p>
+                </div>
+              </div>
+                 <div className="flex items-center text-[#6a6c71] text-[13px] font-medium py-2 pl-[10%]">
+                    <p className="w-[15%] px-2">Ажилтан</p>
+                    <p className="w-[15%] px-2">Шилжүүлсэн</p>
+                    <p className="w-[15%] px-2">Хүлээн авсан</p>
+                    <p className="w-[30%] flex justify-end px-2">Хэнд шилжүүлсэн</p>
+                 </div>
+            </div>
+                <div className="flex items-center text-[13px] text-[#000] py-2 border-b border-[#d9d9d9]">
+                            <div className="whitespace-normal w-[15%] flex items-center px-2">
+                                <Avatar src={""} className="w-8 h-8 rounded-full mr-2" />
+                                <div>
+                                    {/* <p>{item?.authorName}</p> */}
+                                    {/* <p className="text-[#6a6c71]">{data.appName}</p> //asuuh */}
+                                </div>
+                            </div>
+                            <div className=" whitespace-normal w-[15%] px-2">
+                                {/* <p>{receivedDate}</p> */}
+                                {/* <p className="text-[#6a6c71]">{item.receivedDate}</p> */}
+                            </div>
+                            <div className=" whitespace-normal w-[15%] px-2">
+                                {/* <p>{createdAt}</p> */}
+                                {/* <p className="text-[#6a6c71]">{data.transferredTime}</p> */}
+                            </div>
+                            <div className="flex justify-between w-[50%]">
+                                <div className="whitespace-normal flex flex-col items-center w-[20%] px-2">
+                                    {/* <p>{item.receiverName}</p> */}
+                                    {/* <p>{data.app}</p> */}
+                                </div>
+                            </div>
+                   </div>
+            </div>
+            {openTransition && <TransitionModal open={openTransition} setOpen={setOpenTransition} id={id} />}
+            </div>
     )
 }
