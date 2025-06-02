@@ -1,13 +1,13 @@
 "use client";
 
 import { useRouter } from "next/router";
-import { useEffect, useState, Fragment } from "react";
+import { useEffect, useState, Fragment, useCallback } from "react";
 import { Avatar, Divider, Textarea, TextareaAutosize } from "@mui/material";
 import KeyboardBackspaceOutlinedIcon from "@mui/icons-material/KeyboardBackspaceOutlined";
 import { HiOutlinePencilAlt } from "react-icons/hi";
 import { IoMdPin } from "react-icons/io";
 import { FaRegTrashCan } from "react-icons/fa6";
-import { activityApi } from "../../api";
+import { activityApi, employeeAPI } from "../../api";
 import { MoreMainModal } from "../modal/moreMainModal";
 import { MoreParticipantModal } from "../modal/moreParticipantModal";
 import LocationPicker from "../../LocationPicker";
@@ -46,6 +46,25 @@ export const MoreActivity = () => {
             fetchActivityById();
         }
     }, [id]);
+
+    const [employees, setEmployees] = useState();
+
+    const fetchEmployees = useCallback(async () => {
+        setLoading(true);
+        try {
+            const response = await employeeAPI.getEmployees();
+            setEmployees(response.data);
+            console.log("res", response.data);
+        } catch (error) {
+            setError("Error fetching employee data");
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    useEffect(() => {
+        fetchEmployees();
+    }, [fetchEmployees]);
 
     const handleBackClick = () => {
         router.push("/activities");
@@ -198,61 +217,6 @@ export const MoreActivity = () => {
                             value={activity?.decision}
                         />
                     </div>
-
-                    {/* Хавсралт файлууд */}
-                    <div>
-                        <h2 className="font-semibold py-3">
-                            Хавсралт файлууд:
-                        </h2>
-                        <div className="overflow-x-auto">
-                            <table className="w-full border-collapse border-b border-gray-300 text-[13px]">
-                                <thead className="text-[#015197]">
-                                    <tr>
-                                        <th className="text-left p-2">№</th>
-                                        <th className="text-left p-2">
-                                            Файлын нэр
-                                        </th>
-                                        <th className="text-left p-2">
-                                            Нэмэгдсэн огноо
-                                        </th>
-                                        <th className="text-left p-2">
-                                            Үйлдэл
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {activity?.file?.length > 0 ? (
-                                        activity.file.map((item, idx) => (
-                                            <tr key={idx} className="border-t">
-                                                <td className="p-2">
-                                                    {idx + 1}
-                                                </td>
-                                                <td className="p-2">{item}</td>
-                                                <td className="p-2">
-                                                    [--/-- --:--]
-                                                </td>
-                                                <td className="p-2">
-                                                    <FaRegTrashCan
-                                                        size={20}
-                                                        className="cursor-pointer text-red-500"
-                                                    />
-                                                </td>
-                                            </tr>
-                                        ))
-                                    ) : (
-                                        <tr>
-                                            <td
-                                                colSpan={4}
-                                                className="text-center py-4 text-gray-500"
-                                            >
-                                                Хавсралт файл алга байна.
-                                            </td>
-                                        </tr>
-                                    )}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
                 </div>
 
                 {/* VERTICAL DIVIDER */}
@@ -279,19 +243,25 @@ export const MoreActivity = () => {
                                 Үндсэн гишүүд
                             </h2>
                             <div className="flex flex-col gap-3">
-                                <div className="flex justify-between items-center gap-4">
-                                    <img
-                                        src="https://img.freepik.com/premium-vector/avatar-profile-icon-flat-style-male-user-profile-vector-illustration-isolated-background-man-profile-sign-business-concept_157943-38764.jpg?semt=ais_hybrid&w=740"
-                                        alt="name"
-                                        className="rounded-full p-1 w-[50px] h-[50px] object-cover border-2"
-                                    />
-                                    <div className="text-[12px]">
-                                        <p className="font-bold">С.Солонго</p>
-                                        <p className="text-[#6B6B6B]">
-                                            Программист
-                                        </p>
-                                    </div>
-                                </div>
+                                {employees?.map((item, index) => {
+                                    return (
+                                        <div className="flex justify-between items-center gap-4">
+                                            <img
+                                                src="https://img.freepik.com/premium-vector/avatar-profile-icon-flat-style-male-user-profile-vector-illustration-isolated-background-man-profile-sign-business-concept_157943-38764.jpg?semt=ais_hybrid&w=740"
+                                                alt="name"
+                                                className="rounded-full p-1 w-[50px] h-[50px] object-cover border-2"
+                                            />
+                                            <div className="text-[12px]">
+                                                <p className="font-bold">
+                                                    {item.name}
+                                                </p>
+                                                <p className="text-[#6B6B6B]">
+                                                    Программист
+                                                </p>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
                             </div>
                         </div>
                         <Divider
