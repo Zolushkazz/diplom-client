@@ -77,6 +77,7 @@ export const MoreMainModal = ({ open, setOpen, data }) => {
     const [employeeData, setEmployeeData] = useState({
         familyName: data?.familyName,
         birthDate: data?.birthDate,
+        image: data?.image,
         gender: data?.gender,
         province: data?.province,
         district: data?.district,
@@ -91,7 +92,6 @@ export const MoreMainModal = ({ open, setOpen, data }) => {
 
     console.log("emp data", employeeData);
 
-    // Populate form fields with data when the modal opens
     useEffect(() => {
         if (data) {
             console.log("pro data", data);
@@ -114,15 +114,13 @@ export const MoreMainModal = ({ open, setOpen, data }) => {
             province: province,
         }));
 
-        // Reset district when province changes
         setSelectedDistrict("");
         setEmployeeData((prevData) => ({
             ...prevData,
-            district: "", // Reset district when province is changed
+            district: "",
         }));
     };
 
-    // Handle district change
     const handleDistrictChange = (e) => {
         const district = e.target.value;
         setSelectedDistrict(district);
@@ -179,19 +177,19 @@ export const MoreMainModal = ({ open, setOpen, data }) => {
                                 Үндсэн мэдээлэл
                             </h2>
 
-                            <div className="flex items-center gap-6">
-                                <Avatar
-                                    sx={{
-                                        width: 110,
-                                        height: 110,
-                                        boxShadow: 2,
-                                    }}
-                                />
-                                <button className="border px-2 py-1 h-8 rounded-sm border-[#b5b5b5]">
-                                    Зураг оруулах
-                                </button>
-                            </div>
-
+                            <TextField
+                                size="small"
+                                variant="outlined"
+                                label="Зураг оруулах"
+                                sx={inputStyle}
+                                value={employeeData.image}
+                                onChange={(e) =>
+                                    setEmployeeData({
+                                        ...employeeData,
+                                        image: e.target.value,
+                                    })
+                                }
+                            />
                             <TextField
                                 size="small"
                                 variant="outlined"

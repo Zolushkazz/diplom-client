@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Select, MenuItem, TextField } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import { Add, DeleteOutline } from "@mui/icons-material";
+import { Add, DeleteOutline, EditOutlined } from "@mui/icons-material";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import { AddActivities } from "./modal/addActivities";
 import { HiOutlinePencilAlt } from "react-icons/hi";
 import { FaRegTrashCan } from "react-icons/fa6";
@@ -50,6 +51,7 @@ const Activities = () => {
     const [deleteRow, setDeleteRow] = useState(false);
     const [rowIdToDelete, setRowIdToDelete] = useState(null);
     const { startLoading, stopLoading } = useLoadingContext();
+    const [editData, setEditData] = useState(null);
 
     const [activities, setActivities] = useState([]);
 
@@ -63,6 +65,11 @@ const Activities = () => {
             },
         });
         console.log("row", row);
+    };
+
+    const handleEdit = (employee) => {
+        setEditData(employee);
+        setOpenAddModal(true);
     };
 
     const fetchEmployees = async () => {
@@ -117,21 +124,6 @@ const Activities = () => {
                             <h2 className="font-semibold text-[13px]">
                                 Үйл ажиллагаанууд
                             </h2>
-                            <Select
-                                value={year}
-                                onChange={(e) => setYear(e.target.value)}
-                                className="h-7"
-                            >
-                                <MenuItem fontSize="13px" value="2025">
-                                    2025
-                                </MenuItem>
-                                <MenuItem fontSize="13px" value="2024">
-                                    2024
-                                </MenuItem>
-                                <MenuItem fontSize="13px" value="2023">
-                                    2023
-                                </MenuItem>
-                            </Select>
                         </div>
                         <div className="flex items-center gap-3">
                             <div className="flex items-center px-2 relative">
@@ -257,6 +249,16 @@ const Activities = () => {
                                                 ).toLocaleDateString()}
                                             </td>
                                             <td className="border-t p-2 gap-2 cursor-pointer">
+                                                <EditOutlinedIcon
+                                                    sx={{
+                                                        color: "gray",
+                                                        cursor: "pointer",
+                                                    }}
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleEdit(row);
+                                                    }}
+                                                />
                                                 <DeleteOutline
                                                     onClick={() => {
                                                         setRowIdToDelete(
@@ -279,6 +281,7 @@ const Activities = () => {
                         open={openAddModal}
                         setOpen={setOpenAddModal}
                         onSuccess={fetchEmployees}
+                        editData={editData}
                     />
                     <ConfirmModal
                         open={deleteRow}

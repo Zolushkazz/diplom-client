@@ -45,7 +45,7 @@ export const MoreHr = () => {
                 style={{ cursor: "pointer", fontSize: "30px" }}
             />
             <p className="border-b py-1"></p>
-            <div className="flex w-full items-center justify-between">
+            <div className="flex w-full py-5 items-center justify-between">
                 <h2 className="text-[15px] p-4 font-semibold ">
                     Дэлгэрэнгүй мэдээлэл
                 </h2>
@@ -58,10 +58,20 @@ export const MoreHr = () => {
             </div>
             <div className="flex px-8 gap-4">
                 <div className="flex flex-col gap-5 items-center">
-                    <Avatar sx={{ width: 100, height: 100, boxShadow: 2 }} />
-                    <button className="w-fit border px-3 py-1 rounded-md border-[#b2b2b2]">
-                        Зураг солих
-                    </button>
+                    <img
+                        src={
+                            employee?.image
+                                ? employee?.image
+                                : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+                        }
+                        alt={employee?.username}
+                        className="rounded-full w-28 h-28"
+                    />
+                    {!employee?.image && (
+                        <p className="line-clamp-2 w-[80%] text-center">
+                            Одоогоор зураг оруулаагүй байна.
+                        </p>
+                    )}
                 </div>
                 <Divider
                     orientation="vertical"
