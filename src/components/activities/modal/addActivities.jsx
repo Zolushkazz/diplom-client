@@ -11,8 +11,16 @@ import {
 import { useEffect, useState } from "react";
 import LoadingComponent from "../../LoadingComp";
 import { useLoadingContext } from "../../LoadingProvider";
+import SuccessErrorModal from "../../successErrorModal";
+import { toast, ToastContainer } from "react-toastify";
 
-export const AddActivities = ({ open, setOpen, onSuccess, editData }) => {
+export const AddActivities = ({
+    open,
+    setOpen,
+    onSuccess,
+    editData,
+    setEditData,
+}) => {
     const { startLoading, stopLoading } = useLoadingContext();
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
@@ -23,6 +31,10 @@ export const AddActivities = ({ open, setOpen, onSuccess, editData }) => {
         department: "",
     });
 
+    const [status, setStatus] = useState();
+
+    console.log("editData", editData);
+
     const handleClose = () => {
         setFormData({
             authorId: "",
@@ -30,6 +42,7 @@ export const AddActivities = ({ open, setOpen, onSuccess, editData }) => {
             activityType: "",
             department: "",
         });
+        setEditData(null);
         setErrors({});
         setOpen(false);
     };
@@ -75,10 +88,16 @@ export const AddActivities = ({ open, setOpen, onSuccess, editData }) => {
         e.preventDefault();
         if (!validateForm()) return;
         setLoading(true);
+        // startLoading("saving", "Өгөгдлийг хадгалж байна...");
 
         try {
-            const response = await fetch(`http://localhost:4000/activities`, {
-                method: "POST",
+            const url = editData
+                ? `http://localhost:4000/activities/${editData.id}`
+                : `http://localhost:4000/activities`;
+            const method = editData ? "PUT" : "POST";
+
+            const response = await fetch(url, {
+                method: method,
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -95,12 +114,14 @@ export const AddActivities = ({ open, setOpen, onSuccess, editData }) => {
                 const errorData = await response.json();
                 throw new Error(errorData.message || "Алдаа гарлаа");
             }
-            if (response.status === 200)
-                return startLoading("done", "Амжилттай дууслаа!");
+
+            if (response.ok) {
+                setStatus(true);
+                onSuccess();
+            }
 
             const result = await response.json();
             console.log("Success:", result);
-            onSuccess();
             handleClose();
         } catch (error) {
             console.error("Full error:", error);
@@ -109,9 +130,12 @@ export const AddActivities = ({ open, setOpen, onSuccess, editData }) => {
                 submit: error.message || "Алдаа гарлаа. Дахин оролдоно уу.",
             }));
         } finally {
+            stopLoading();
             setLoading(false);
         }
     };
+
+    console.log(status);
 
     return (
         <>
@@ -287,6 +311,8 @@ export const AddActivities = ({ open, setOpen, onSuccess, editData }) => {
                     </div>
                 </div>
             </Popover>
+            <ToastContainer />
+            <SuccessErrorModal type="success" open={status} message={"hi"} />
         </>
     );
 };

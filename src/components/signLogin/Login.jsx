@@ -11,7 +11,11 @@ export default function Login() {
         e.preventDefault();
         try {
             const { data } = await authAPI.logIn(form);
+            console.log("data", data);
+
+            // 🟢 Backend-аас ирж буй `access_token` утгыг хадгална
             localStorage.setItem("token", data.access_token);
+
             router.push("/");
             alert("Амжилттай нэвтэрлээ!");
         } catch (err) {

@@ -14,6 +14,7 @@ import Link from "next/link";
 import LoadingComponent from "../LoadingComp";
 import ConfirmModal from "../deleteWarningModal";
 import { useLoadingContext } from "../LoadingProvider";
+import { toast, ToastContainer } from "react-toastify";
 
 const employees = [
     {
@@ -93,8 +94,6 @@ const HR = () => {
     }, []);
 
     const handleDelete = async (id) => {
-        startLoading("doing", "Үйлдэл хийж байна...");
-
         try {
             const response = await employeeAPI.deleteEmployee(id);
 
@@ -102,14 +101,14 @@ const HR = () => {
                 fetchEmployees();
                 setDeleteRow(false);
                 setRowIdToDelete(null);
-                startLoading("done", "Амжилттай дууслаа!");
+                toast.success("Амжилттай устгагдлаа!");
             }
 
             console.log("Employee deleted successfully:", response.data);
             setLoading(false);
         } catch (error) {
             setError(error.message || "Алдаа гарлаа. Дахин оролдоно уу.");
-            startLoading("warn", "Алдаа гарлаа!");
+            toast.error("Алдаа гарлаа. Дахин оролдоно уу.");
         }
     };
 
@@ -125,21 +124,6 @@ const HR = () => {
                                 <h2 className="font-semibold text-[13px]">
                                     Ажилчид
                                 </h2>
-                                <Select
-                                    value={year}
-                                    onChange={(e) => setYear(e.target.value)}
-                                    className="h-7"
-                                >
-                                    <MenuItem fontSize="13px" value="2025">
-                                        2025
-                                    </MenuItem>
-                                    <MenuItem fontSize="13px" value="2024">
-                                        2024
-                                    </MenuItem>
-                                    <MenuItem fontSize="13px" value="2023">
-                                        2023
-                                    </MenuItem>
-                                </Select>
                             </div>
                             <div className="flex items-center gap-3">
                                 <div className="flex items-center px-2 relative">
@@ -291,11 +275,16 @@ const HR = () => {
                             </table>
                         </div>
                     </div>
+                    <ToastContainer />
                     <AddWorker
                         open={openAddModal}
                         setOpen={setOpenAddModal}
-                        onSuccess={fetchEmployees}
+                        onSuccess={() => {
+                            fetchEmployees();
+                            toast.success("Амжилттай хадгалагдлаа!");
+                        }}
                         editData={editData}
+                        setEditData={setEditData}
                     />
                     <ConfirmModal
                         open={deleteRow}

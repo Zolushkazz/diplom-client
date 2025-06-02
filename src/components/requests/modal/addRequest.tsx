@@ -15,7 +15,13 @@ interface Employee {
     id: number;
     name: string;
 }
-export const AddRequest = ({ open, setOpen, editData, setEditData, onSuccess }) => {
+export const AddRequest = ({
+    open,
+    setOpen,
+    editData,
+    onSuccess,
+    setEditData,
+}) => {
     const [getWorkers, setGetWorkers] = useState<Employee[]>([]);
     const [errors, setErrors] = useState({});
     const [formData, setFormData] = useState({
@@ -33,7 +39,7 @@ export const AddRequest = ({ open, setOpen, editData, setEditData, onSuccess }) 
                 notes: editData.notes || "",
             });
         }
-    }, [editData]);
+    }, [open, editData]);
 
     const handleClose = () => {
         setOpen(false);
@@ -52,6 +58,7 @@ export const AddRequest = ({ open, setOpen, editData, setEditData, onSuccess }) 
             try {
                 const response = await employeeAPI.getEmployees();
                 setGetWorkers(response.data);
+                console.log("ressss", response);
             } catch (error) {
                 console.error("Error fetching employees:", error);
             } finally {
@@ -98,7 +105,7 @@ export const AddRequest = ({ open, setOpen, editData, setEditData, onSuccess }) 
         e.preventDefault();
         if (!validateForm()) return;
         setIsLoading(true);
-        console.log("sd", process.env.REACT_APP_API_URL);
+        // console.log("sd", process.env.REACT_APP_API_URL);
 
         try {
             let response;

@@ -11,8 +11,15 @@ import {
 import { useEffect, useState } from "react";
 import LoadingComponent from "../../LoadingComp";
 import { employeeAPI } from "../../api";
+import { toast, ToastContainer } from "react-toastify";
 
-export const AddWorker = ({ open, setOpen, onSuccess, editData }) => {
+export const AddWorker = ({
+    open,
+    setOpen,
+    onSuccess,
+    editData,
+    setEditData,
+}) => {
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
@@ -38,6 +45,7 @@ export const AddWorker = ({ open, setOpen, onSuccess, editData }) => {
             phone: "",
         });
         setErrors({});
+        setEditData(null);
         setOpen(false);
     };
 
@@ -128,7 +136,7 @@ export const AddWorker = ({ open, setOpen, onSuccess, editData }) => {
             }
 
             console.log("Success:", response);
-            onSuccess(true);
+            onSuccess();
             handleClose();
         } catch (error) {
             console.error("Full error:", error);
