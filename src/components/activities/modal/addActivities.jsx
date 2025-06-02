@@ -20,6 +20,7 @@ export const AddActivities = ({
     onSuccess,
     editData,
     setEditData,
+    onError,
 }) => {
     const { startLoading, stopLoading } = useLoadingContext();
     const [errors, setErrors] = useState({});
@@ -110,11 +111,11 @@ export const AddActivities = ({
                 }),
             });
 
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || "Алдаа гарлаа");
-            }
+            console.log(response);
 
+            if (response.status === 403) {
+                onError();
+            }
             if (response.ok) {
                 setStatus(true);
                 onSuccess();

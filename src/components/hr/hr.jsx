@@ -104,11 +104,18 @@ const HR = () => {
                 toast.success("Амжилттай устгагдлаа!");
             }
 
+            console.log("del res", response);
             console.log("Employee deleted successfully:", response.data);
             setLoading(false);
         } catch (error) {
-            setError(error.message || "Алдаа гарлаа. Дахин оролдоно уу.");
-            toast.error("Алдаа гарлаа. Дахин оролдоно уу.");
+            console.log("error", error);
+
+            if (error.response && error.response.status === 403) {
+                toast.warn("Танд энэ үйлдлийг хийх эрх байхгүй байна!");
+            } else {
+                setError(error.message || "Алдаа гарлаа. Дахин оролдоно уу.");
+                toast.error("Алдаа гарлаа. Дахин оролдоно уу.");
+            }
         }
     };
 
@@ -282,6 +289,11 @@ const HR = () => {
                         onSuccess={() => {
                             fetchEmployees();
                             toast.success("Амжилттай хадгалагдлаа!");
+                        }}
+                        onError={() => {
+                            toast.warn(
+                                "Танд энэ үйлдлийг хийх эрх байхгүй байна!"
+                            );
                         }}
                         editData={editData}
                         setEditData={setEditData}
