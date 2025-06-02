@@ -6,10 +6,36 @@ import { usePathname, useRouter } from "next/navigation";
 import Requests from "./requests/requests";
 import Monitor from "./monitor/monitor";
 import HR from "./hr/hr";
+import { userAPI } from "./api";
 
 export const Sidebar = ({ children }) => {
     const router = useRouter();
     const pathname = usePathname();
+
+    const [profile, setProfile] = useState();
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState();
+    const [userRole, setUserRole] = useState();
+
+    useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                const response = await userAPI.getProfile();
+                console.log("res", response);
+
+                setProfile(response.data.data);
+                setUserRole(response.data.data.role);
+            } catch (err) {
+                setError("Profile авахад алдаа гарлаа!");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchProfile();
+    }, []);
+
+    // console.log(profile, ro);
 
     const [activeComponent, setActiveComponent] = useState("monitor");
 

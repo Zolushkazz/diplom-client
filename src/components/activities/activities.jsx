@@ -95,17 +95,23 @@ const Activities = () => {
         try {
             const response = await activityApi.deleteActivity(id);
 
+            console.log(response.status);
+
             if (response.status === 200) {
+                toast.success("Амжилттай устгагдлаа!");
                 fetchEmployees();
                 setDeleteRow(false);
                 setRowIdToDelete(null);
-                toast.success("Амжилттай устгагдлаа!");
             }
 
             console.log("Employee deleted successfully:", response.data);
         } catch (error) {
-            setError("Error deleting employee");
-            toast.error("Алдаа гарлаа. Дахин оролдоно уу.");
+            if (error.response && error.response.status === 403) {
+                toast.warn("Танд энэ үйлдлийг хийх эрх байхгүй байна!");
+            } else {
+                setError(error.message || "Алдаа гарлаа. Дахин оролдоно уу.");
+                toast.error("Алдаа гарлаа. Дахин оролдоно уу.");
+            }
         }
     };
 
@@ -224,7 +230,7 @@ const Activities = () => {
                                                 }
                                                 className="border-t p-2"
                                             >
-                                                {row.authorId}
+                                                Б.Ананд
                                             </td>
                                             <td
                                                 onClick={() =>
@@ -273,12 +279,18 @@ const Activities = () => {
                             </tbody>
                         </table>
                     </div>
+                    <ToastContainer />
                     <AddActivities
                         open={openAddModal}
                         setOpen={setOpenAddModal}
                         onSuccess={() => {
                             fetchEmployees();
                             toast.success("Амжилттай хадгалагдлаа!");
+                        }}
+                        onError={() => {
+                            toast.warn(
+                                "Танд энэ үйлдлийг хийх эрх байхгүй байна!"
+                            );
                         }}
                         editData={editData}
                         setEditData={setEditData}
@@ -291,7 +303,6 @@ const Activities = () => {
                     />
                 </div>
             )}
-            <ToastContainer />
         </>
     );
 };

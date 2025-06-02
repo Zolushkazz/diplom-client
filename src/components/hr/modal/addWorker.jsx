@@ -19,6 +19,7 @@ export const AddWorker = ({
     onSuccess,
     editData,
     setEditData,
+    onError,
 }) => {
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
@@ -117,26 +118,33 @@ export const AddWorker = ({
         console.log("sd", process.env.REACT_APP_API_URL);
 
         try {
-            let response;
+            const url = editData
+                ? `http://localhost:4000/employees/${editData.id}`
+                : `http://localhost:4000/employees`;
+            const method = editData ? "PUT" : "POST";
 
-            if (editData && editData.id) {
-                response = await employeeAPI.updateEmployeeById(editData.id, {
+            const response = await fetch(url, {
+                method: method,
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+                body: JSON.stringify({
                     name: formData.name,
                     lastName: formData.lastName,
                     department: formData.department,
                     role: formData.role,
-                });
-            } else {
-                response = await employeeAPI.createEmployee({
-                    name: formData.name,
-                    lastName: formData.lastName,
-                    department: formData.department,
-                    role: formData.role,
-                });
+                }),
+            });
+            if (response.status === 403) {
+                onError();
+            }
+            if (response.ok) {
+                onSuccess();
             }
 
-            console.log("Success:", response);
-            onSuccess();
+            const result = await response.json();
+            console.log("Success:", result);
             handleClose();
         } catch (error) {
             console.error("Full error:", error);
