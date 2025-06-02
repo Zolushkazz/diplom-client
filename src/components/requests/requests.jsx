@@ -9,6 +9,7 @@ import { AddRequest } from "./modal/addRequest";
 import { requestAPI } from "../api";
 import ConfirmModal from "../deleteWarningModal";
 import { useRouter } from "next/router";
+import { toast, ToastContainer } from "react-toastify";
 
 const Requests = () => {
     const [search, setSearch] = useState("");
@@ -41,20 +42,14 @@ const Requests = () => {
     }, [pageRefresh]);
 
     const handleEdit = (id) => {
-      fetchReqMore(id);
-      setOpenAddModal(true);
+        fetchReqMore(id);
+        setOpenAddModal(true);
     };
 
-    const fetchReqMore = async (reqId) => {     
-      try {
-        const response = await requestAPI.getRequestById(reqId);
-        if (response.status == 200) {
-          setEditData(response.data);
-        }
-      } catch (error) { 
-        setError("Error fetching request data");
-      }
-    }
+    const handleAddNew = () => {
+        setEditData(null);
+        setOpenAddModal(true);
+    };
 
     const handleDelete = async (id) => {
         try {
@@ -63,10 +58,12 @@ const Requests = () => {
                 setPageRefresh(true);
                 setDeleteRow(false);
                 setRowIdToDelete(null);
+                toast.success("Амжилттай устгагдлаа!");
             }
         } catch (error) {
             console.error("Error:", error);
             setError(error.message || "Алдаа гарлаа. Дахин оролдоно уу.");
+            toast.error("Алдаа гарлаа. Дахин оролдоно уу.");
         }
     };
 
@@ -149,7 +146,9 @@ const Requests = () => {
                                     <tr
                                         key={index}
                                         className="hover:bg-gray-50 cursor-pointer"
-                                        onClick={() => handleRowClick(request.id)}
+                                        onClick={() =>
+                                            handleRowClick(request.id)
+                                        }
                                     >
                                         <td className="border-t p-2">
                                             {request.name}
@@ -180,7 +179,7 @@ const Requests = () => {
                                                 }}
                                                 onClick={(e) => {
                                                     e.stopPropagation();
-                                                    handleEdit(request.id);
+                                                    handleEdit(request);
                                                 }}
                                             />
                                             <DeleteOutline
@@ -203,6 +202,7 @@ const Requests = () => {
                     </table>
                 </div>
             </div>
+            <ToastContainer />
             <AddRequest
                 open={openAddModal}
                 setOpen={setOpenAddModal}

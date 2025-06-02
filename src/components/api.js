@@ -1,12 +1,26 @@
+// api.ts
 import axios from "axios";
 
+// 1️⃣ API client үүсгэх
 const API = axios.create({
     baseURL: process.env.REACT_APP_API_URL || "http://localhost:4000",
-    withCredentials: true,
+    withCredentials: true, // cookie дамжуулах эсэх
 });
 
-console.log("API base URL:", process.env.REACT_APP_API_URL);
+// 2️⃣ interceptor нэмэх - бүх хүсэлтэд Bearer токен автоматаар өгөх
+API.interceptors.request.use(
+    (config) => {
+        // localStorage (эсвэл sessionStorage) доторх токен авч байна
+        const token = localStorage.getItem("token");
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+    },
+    (error) => Promise.reject(error)
+);
 
+// 3️⃣ API wrapper-ууд
 export const authAPI = {
     logIn: (data) => API.post("/auth/login", data),
     logOut: () => API.post("/auth/logout"),
@@ -17,7 +31,7 @@ export const userAPI = {
 };
 
 export const employeeAPI = {
-    createEmployee: (data) => API.post("/", data),
+    createEmployee: (data) => API.post("/employees", data),
     getEmployees: () => API.get("/employees"),
     getEmployeeById: (id) => API.get(`/employees/${id}`),
     deleteEmployee: (id) => API.delete(`/employees/${id}`),
@@ -31,10 +45,6 @@ export const activityApi = {
     updateActivityById: (id, data) => API.put(`/activities/${id}`, data),
 };
 
-export const activitiesAPI = {
-    getActivities: () => API.get("/"),
-};
-
 export const requestAPI = {
     createRequest: (data) => API.post("/request/create", data),
     getRequests: () => API.get("/request"),
@@ -43,3 +53,8 @@ export const requestAPI = {
     updateRequestById: (id, data) => API.put(`/request/${id}`, data),
     shiftRequest: (data) => API.put(`/request/shift`, data),
 };
+
+// 4️⃣ Консол дээр API base URL харуулах
+console.log("API base URL:", process.env.REACT_APP_API_URL);
+
+export default API;

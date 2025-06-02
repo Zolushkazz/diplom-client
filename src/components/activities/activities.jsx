@@ -11,6 +11,7 @@ import { activityApi, employeeAPI } from "../api";
 import LoadingComponent from "../LoadingComp";
 import { useLoadingContext } from "../LoadingProvider";
 import ConfirmModal from "../deleteWarningModal";
+import { toast, ToastContainer } from "react-toastify";
 
 const data = [
     {
@@ -91,26 +92,21 @@ const Activities = () => {
     }, []);
 
     const handleDelete = async (id) => {
-        setLoading(true);
-        startLoading("doing", "Үйлдэл хийж байна...");
         try {
             const response = await activityApi.deleteActivity(id);
+
             if (response.status === 200) {
                 fetchEmployees();
                 setDeleteRow(false);
                 setRowIdToDelete(null);
-                startLoading("done", "Амжилттай дууслаа!");
+                toast.success("Амжилттай устгагдлаа!");
             }
 
             console.log("Employee deleted successfully:", response.data);
         } catch (error) {
             setError("Error deleting employee");
-            startLoading("warn", "Алдаа гарлаа!");
-        } finally {
-            stopLoading();
+            toast.error("Алдаа гарлаа. Дахин оролдоно уу.");
         }
-
-        setLoading(false);
     };
 
     return (
@@ -280,8 +276,12 @@ const Activities = () => {
                     <AddActivities
                         open={openAddModal}
                         setOpen={setOpenAddModal}
-                        onSuccess={fetchEmployees}
+                        onSuccess={() => {
+                            fetchEmployees();
+                            toast.success("Амжилттай хадгалагдлаа!");
+                        }}
                         editData={editData}
+                        setEditData={setEditData}
                     />
                     <ConfirmModal
                         open={deleteRow}
@@ -291,6 +291,7 @@ const Activities = () => {
                     />
                 </div>
             )}
+            <ToastContainer />
         </>
     );
 };

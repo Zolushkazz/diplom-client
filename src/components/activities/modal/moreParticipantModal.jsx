@@ -29,7 +29,10 @@ const inputStyle = {
 };
 
 export const MoreParticipantModal = ({ open, setOpen, data }) => {
-    const handleClose = () => setOpen(false);
+    const handleClose = () => {
+        setOpen(false);
+        setActivityData(null);
+    };
     const [isCancel, setIsCancel] = useState(false);
     const [employees, setEmployees] = useState([]);
 
@@ -37,19 +40,37 @@ export const MoreParticipantModal = ({ open, setOpen, data }) => {
 
     const [loading, setLoading] = useState(false);
     const [activityData, setActivityData] = useState({
-        activityName: data?.activityName,
-        activityType: data?.activityType,
-        department: data?.department,
-        status: data?.status,
-        startDate: data?.startDate,
-        startTime: data?.startTime,
-        endTime: data?.endTime,
-        district: data?.district,
-        participant: data?.participant,
-        notes: data?.notes,
-        decision: data?.decision,
-        file: data?.file,
+        activityName: "",
+        activityType: "",
+        department: "",
+        status: "",
+        startDate: "",
+        startTime: "",
+        endTime: "",
+        district: "",
+        participant: [],
+        notes: "",
+        decision: "",
     });
+
+    // Modal нээгдэх үед data-г шинэчлэх
+    useEffect(() => {
+        if (open && data) {
+            setActivityData({
+                activityName: data.activityName || "",
+                activityType: data.activityType || "",
+                department: data.department || "",
+                status: data.status || "",
+                startDate: data.startDate || "",
+                startTime: data.startTime || "",
+                endTime: data.endTime || "",
+                district: data.district || "",
+                participant: data.participant || "",
+                notes: data.notes || "",
+                decision: data.decision || "",
+            });
+        }
+    }, [open, data]);
 
     console.log("activity data", activityData);
 
@@ -110,13 +131,27 @@ export const MoreParticipantModal = ({ open, setOpen, data }) => {
     const handleAddParticipant = () => {
         setActivityData((prev) => ({
             ...prev,
-            participant: [...(prev.participant || []), participantForm],
+            participant: [...prev.participant, participantForm],
         }));
-
-        console.log(participantForm);
-
-        setParticipantForm(participantForm);
+        // Хоослох
+        setParticipantForm({
+            lastName: "",
+            firstName: "",
+            phone: "",
+            email: "",
+            address: "",
+            image: "",
+        });
         setIsCancel(false);
+    };
+
+    const handleDelete = (index) => {
+        const updatedParticipants = [...activityData.participant];
+        updatedParticipants.splice(index, 1);
+        setActivityData({
+            ...activityData,
+            participant: updatedParticipants,
+        });
     };
 
     return (
