@@ -51,7 +51,8 @@ export const requestAPI = {
     getRequestById: (id) => API.get(`/request/${id}`),
     deleteRequest: (id) => API.delete(`/request/${id}`),
     updateRequestById: (id, data) => API.put(`/request/${id}`, data),
-    shiftRequest: (data) => API.put(`/request/shift`, data),
+    shiftRequest: (data) => API.post(`/request/shift`, data),
+    closeShift: (data) => API.post(`/request/close`, data),
 };
 
 // 4️⃣ Консол дээр API base URL харуулах

@@ -4,7 +4,7 @@ import { FormControl, InputLabel, Popover, Select, MenuItem } from "@mui/materia
 import { useState, useEffect } from "react";
 import { employeeAPI, requestAPI } from "../../api";
 
-export const TransitionModal = ({open, setOpen, id}) => {
+export const TransitionModal = ({open, setOpen, id, onSuccess}) => {
     const [formData, setFormData] = useState({
         name: '',
         startDate: '',
@@ -12,12 +12,20 @@ export const TransitionModal = ({open, setOpen, id}) => {
     });
     const [getWorkers, setGetWorkers] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [errors, setErrors] = useState({});
 
     const handleClose = () => {
         setOpen(false)
     }
 
     const handleChange = (event) => {
+         if (errors[name]) {
+            setErrors(prev => {
+                const newErrors = { ...prev };
+                delete newErrors[name];
+                return newErrors;
+            });
+        }
         setFormData({
             ...formData,
             [event.target.name]: event.target.value
@@ -40,21 +48,18 @@ export const TransitionModal = ({open, setOpen, id}) => {
         fetchEmployees();
     }, []);
 
-     const handleSubmit = async (e) => {
-        console.log(id);
-        
+     const handleSubmit = async (e) => {        
           e.preventDefault();
                 setIsLoading(true);
-                
                 try {
                     const response = await requestAPI.shiftRequest({
                             shiftId: id,
                             receiverName: formData.name,
                         });
-                    
-                    console.log('Success:', response);
-                    onSuccess(true);
+                if(response.status == 200 ||response.status == 201){
+                    onSuccess()
                     handleClose();
+                 }
                 } catch (error) {
                     console.error('Error:', error);
                     setErrors(prev => ({
@@ -88,10 +93,10 @@ export const TransitionModal = ({open, setOpen, id}) => {
                 },
             }}
         >
-            <div className="bg-white w-[450px] p-4">
+            <div className="bg-white w-[450px] p-4 text-[13px]">
                 <p>Хүсэлт шилжүүлэх</p>
                 <p className="border-t my-2"></p>
-                <FormControl fullWidth>
+                <FormControl fullWidth sx={{marginY: 3}}>
                     <InputLabel id="select-label" sx={{fontSize: 13}}>Хүсэлт авах ажилтан</InputLabel>
                     <Select 
                         name="name" 
@@ -129,7 +134,7 @@ export const TransitionModal = ({open, setOpen, id}) => {
                     >
                         Гарах
                     </button>
-                </div>
+                </div>  
             </div>
         </Popover>
     )
